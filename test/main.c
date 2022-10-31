@@ -62,6 +62,6 @@ static void out(int n)
 {
 	for (int i = 0; i < 6; ++i)
 	{
-		gpio_put(i+2, !!(n & (1 << i)));
+	(i+2, !!(n & (1 << i)));
 	}
 }
