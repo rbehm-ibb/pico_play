@@ -10,7 +10,7 @@ add_executable(test
 pico_enable_stdio_usb(test 1)
 pico_enable_stdio_uart(test 1)
 pico_add_extra_outputs(test)
-target_link_libraries(test pico_stdlib)
+target_link_libraries(test pico_stdlib hardware_uart pico_multicore)
 #include ($ENV{PICO_SDK_PATH}/family_add_subdirectory(cdc_msc))
 #family_initialize_project(tinyusb_device_examples ${CMAKE_CURRENT_LIST_DIR})
 #family_add_subdirectory(cdc_msc)
