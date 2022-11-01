@@ -11,6 +11,12 @@ core1::core1()
 
 }
 
+void core1::start()
+{
+	multicore_reset_core1();
+	multicore_launch_core1(core1::run);
+}
+
 void core1::out(int n)
 {
 	for (int i = 0; i < 6; ++i)

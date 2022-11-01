@@ -24,8 +24,9 @@ int main()
 
 	gpio_init(LED_PIN);
 	gpio_set_dir(LED_PIN, GPIO_OUT);
-	multicore_reset_core1();
-	multicore_launch_core1(core1::run);
+	core1::start();
+//	multicore_reset_core1();
+//	multicore_launch_core1(core1::run);
 	int n = 0;
 	while (1)
 	{

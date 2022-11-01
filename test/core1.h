@@ -19,9 +19,9 @@ class core1
 {
 public:
 	core1();
-	static void run();
+	static void start();
 private:
-
+	static void run();
 	static void out(int n);
 };
 
