@@ -6,9 +6,10 @@
 
 #include "core1.h"
 
+const int offset = 4;	// first used pin
+
 core1::core1()
 {
-
 }
 
 void core1::start()
@@ -21,13 +22,13 @@ void core1::out(int n)
 {
 	for (int i = 0; i < 6; ++i)
 	{
-		gpio_put(i + 2, !!(n & (1 << i)));
+		gpio_put(i + offset, !!(n & (1 << i)));
 	}
 }
 
 void core1::run()
 {
-	for (int i = 2; i < 8; ++i)
+	for (int i = offset; i < 8; ++i)
 	{
 		gpio_init(i);
 		gpio_set_dir(i, GPIO_OUT);
@@ -38,11 +39,11 @@ void core1::run()
 	{
 		++n;
 		out(n);
-		busy_wait_us_32(1000*2);
-		if (n > 5000)
-		{
-			printf("core1 ---\n");
-			n = 0;
-		}
+		busy_wait_us_32(1000*1);
+//		if (n > 5000)
+//		{
+//			printf("core1 ---\n");
+//			n = 0;
+//		}
 	}
 }
