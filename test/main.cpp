@@ -73,7 +73,7 @@ int main()
 		.pio = pio0,
 		.sm = 0
 	};
-	float clkdiv = 31.25f;  // 1 MHz @ 125 clk_sys
+	float clkdiv = 15.635f;  // 1 MHz @ 125 clk_sys
 	uint cpha0_prog_offs = pio_add_program(spi.pio, &spi_cpha0_program);
 	uint cpha1_prog_offs = pio_add_program(spi.pio, &spi_cpha1_program);
 	for (int cpha = 0; cpha <= 1; ++cpha) {
