@@ -4,6 +4,8 @@
 // * created 11/1/2022 by behm
 // ******************************************************
 
+#include "hardware/gpio.h"
+#include "pico/multicore.h"
 #include "core1.h"
 
 const int offset = 4;	// first used pin

@@ -1,2 +1,4 @@
-borg
-.build
+CMakeFiles
+build
+.CMakeFiles
+xx
