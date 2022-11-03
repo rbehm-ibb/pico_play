@@ -30,3 +30,7 @@
   * multicore_reset_core1() always before starting core1
   * multicore_launch_core1(fct)
 
+## PIO
+
+## links
+  * [Link datasheet](https://datasheets.raspberrypi.com/rp2040/rp2040-datasheet.pdf)
