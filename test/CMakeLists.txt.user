@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.12.0, 2022-11-03T14:28:28. -->
+<!-- Written by QtCreator 4.12.0, 2022-11-04T11:08:58. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -121,8 +121,8 @@
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
-      <value type="QString" key="ProjectExplorer.ProcessStep.Arguments"></value>
-      <value type="QString" key="ProjectExplorer.ProcessStep.Command">cp %{buildDir}/test.uf2  /run/media/behm/RPI-RP2/</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Arguments"> %{buildDir}/test.uf2  /run/media/behm/RPI-RP2/</value>
+      <value type="QString" key="ProjectExplorer.ProcessStep.Command">cp</value>
       <value type="QString" key="ProjectExplorer.ProcessStep.WorkingDirectory">%{buildDir}</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">ProjectExplorer.ProcessStep</value>
      </valuemap>
