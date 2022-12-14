@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PicoForm</class>
+ <widget class="QWidget" name="PicoForm">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>237</width>
+    <height>131</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="verticalSpacing">
+      <number>1</number>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="binlab">
+       <property name="text">
+        <string>BinDir</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="binDir">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="binflab">
+       <property name="text">
+        <string>BinFile</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="binFile">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="picodirlab">
+       <property name="text">
+        <string>PicoDir</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="picoDir">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="picolab">
+       <property name="text">
+        <string>PicoPort</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="picoPort">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+  <action name="actionViewBin">
+   <property name="icon">
+    <iconset resource="rsc/rsc.qrc">
+     <normaloff>:/eye.png</normaloff>:/eye.png</iconset>
+   </property>
+   <property name="text">
+    <string>ViewBin</string>
+   </property>
+  </action>
+  <action name="actionSelBin">
+   <property name="icon">
+    <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
+     <normaloff>:/fileopen</normaloff>:/fileopen</iconset>
+   </property>
+   <property name="text">
+    <string>SelBin</string>
+   </property>
+  </action>
+  <action name="actionResetPico">
+   <property name="icon">
+    <iconset resource="../../../../../Qt/qt-library/lib/utils/ledicon/ledicons.qrc">
+     <normaloff>:/led/LED_red.png</normaloff>:/led/LED_red.png</iconset>
+   </property>
+   <property name="text">
+    <string>ResetPico</string>
+   </property>
+  </action>
+  <action name="actionSelPicoDir">
+   <property name="icon">
+    <iconset resource="rsc/rsc.qrc">
+     <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
+   </property>
+   <property name="text">
+    <string>SelPicoDir</string>
+   </property>
+  </action>
+  <action name="actionMinicom">
+   <property name="icon">
+    <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
+     <normaloff>:/right</normaloff>:/right</iconset>
+   </property>
+   <property name="text">
+    <string>Minicom</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="rsc/rsc.qrc"/>
+  <include location="../../../../../Qt/qt-library/lib/utils/ledicon/ledicons.qrc"/>
+  <include location="../../../../../Qt/qt-library/lib/utils/stdicons.qrc"/>
+ </resources>
+ <connections/>
+</ui>
