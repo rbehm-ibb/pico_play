@@ -26,17 +26,18 @@ public:
 	/// \param device the device to use with optional baudrate appended like "ttyS0:9600".
 	/// \param parent for QObject
 	IBSerialPort(QString device, QObject *parent = nullptr);
-	IBSerialPort(QString device, int defaultBaud, QObject *parent = nullptr);
-	IBSerialPort(quint16 vid, quint16 pid, QString serNr, int baud, QObject *parent = nullptr);
+	IBSerialPort(QString device, qint32 defaultBaud, QObject *parent = nullptr);
+	IBSerialPort(quint16 vid, quint16 pid, QString serNr, qint32 baud, QObject *parent = nullptr);
 	QString device() const;
 signals:
 	void lostPortError();
 private slots:
 	void portError(QSerialPort::SerialPortError err);
 private:
-	void init(QString dev, int defaultBaud);
+	void init(QString dev, qint32  defaultBaud);
 protected:
 	QSerialPortInfo m_devInfo;
+	qint32 m_baud;
 };
 
 #endif // IBSERIALPORT_H

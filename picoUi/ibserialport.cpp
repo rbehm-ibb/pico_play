@@ -12,15 +12,16 @@ IBSerialPort::IBSerialPort(QString device, QObject *parent)
 	init(device, 0);
 }
 
-IBSerialPort::IBSerialPort(QString device, int defaultBaud, QObject *parent)
+IBSerialPort::IBSerialPort(QString device, qint32 defaultBaud, QObject *parent)
 	: QSerialPort(parent)
 {
 	init(device, defaultBaud);
 }
 
-IBSerialPort::IBSerialPort(quint16 vid, quint16 pid, QString serNr, int baud, QObject *parent)
+IBSerialPort::IBSerialPort(quint16 vid, quint16 pid, QString serNr, qint32 baud, QObject *parent)
 	: QSerialPort(parent)
 {
+	m_baud = baud;
 	QSerialPortInfo device;
 	foreach (QSerialPortInfo spi, QSerialPortInfo::availablePorts())
 	{
@@ -40,7 +41,7 @@ IBSerialPort::IBSerialPort(quint16 vid, quint16 pid, QString serNr, int baud, QO
 				qWarning() << Q_FUNC_INFO << portName() << errorString();
 				return;
 			}
-			setBaudRate(baud);
+			setBaudRate(m_baud);
 			setParity(QSerialPort::NoParity);
 			setDataBits(QSerialPort::Data8);
 			setFlowControl(QSerialPort::NoFlowControl);
@@ -56,7 +57,7 @@ IBSerialPort::IBSerialPort(quint16 vid, quint16 pid, QString serNr, int baud, QO
 
 QString IBSerialPort::device() const
 {
-	return QString("%1:%2").arg(portName()).arg(baudRate());
+	return QString("%1:%2").arg(portName()).arg(m_baud);
 }
 
 void IBSerialPort::portError(QSerialPort::SerialPortError err)
@@ -72,14 +73,14 @@ void IBSerialPort::portError(QSerialPort::SerialPortError err)
 	}
 }
 
-void IBSerialPort::init(QString dev, int defaultBaud)
+void IBSerialPort::init(QString dev, qint32 defaultBaud)
 {
-	int baud = defaultBaud == 0 ? 9600 :defaultBaud;
+	m_baud = defaultBaud == 0 ? 9600 :defaultBaud;
 	if (dev.contains(':'))
 	{
 		bool ok;
 		QString sbaud = dev.section(':', 1);
-		baud = sbaud.toUInt(&ok);
+		m_baud = sbaud.toUInt(&ok);
 		if (! ok)
 		{
 			qWarning() << Q_FUNC_INFO << "Bad baudrate given" << dev << "using default";
@@ -92,7 +93,7 @@ void IBSerialPort::init(QString dev, int defaultBaud)
 		qWarning() << Q_FUNC_INFO << portName() << errorString();
 		return;
 	}
-	setBaudRate(baud);
+	setBaudRate(m_baud);
 	setParity(QSerialPort::NoParity);
 	setDataBits(QSerialPort::Data8);
 	setFlowControl(QSerialPort::NoFlowControl);
