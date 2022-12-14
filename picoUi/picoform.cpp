@@ -25,7 +25,7 @@ PicoForm::PicoForm(QWidget *parent)
 //	ui->picoPort->addAction(ui->actionMinicom, QLineEdit::TrailingPosition);
 	ui->picoDir->addAction(ui->actionSelPicoDir, QLineEdit::TrailingPosition);
 	connect(m_port, &PicoPort::devChanged, this, &PicoForm::devChanged);
-	connect(m_binDirWatcher, &QFileSystemWatcher::directoryChanged, this, &PicoForm::directoryChanged);
+	connect(m_binDirWatcher, &QFileSystemWatcher::directoryChanged, this, &PicoForm::binDirectoryChanged);
 	connect(m_picoDirWatcher, &QFileSystemWatcher::directoryChanged, this, &PicoForm::picoDirectoryChanged);
 	devChanged(m_port->isOpen());
 	setBinDir(Config::stringValue("picoForm/bindir"));
@@ -86,7 +86,7 @@ void PicoForm::devChanged(bool on)
 	ui->actionResetPico->setEnabled(on);
 }
 
-void PicoForm::directoryChanged(const QString &path)
+void PicoForm::binDirectoryChanged(const QString &path)
 {
 	qDebug() << Q_FUNC_INFO << path;
 	chkBin();
@@ -95,6 +95,7 @@ void PicoForm::directoryChanged(const QString &path)
 void PicoForm::picoDirectoryChanged(const QString &path)
 {
 	qDebug() << Q_FUNC_INFO << path;
+	setPicoDir(ui->picoDir->text());
 	QDir dir(ui->picoDir->text());
 	ui->picodirlab->setStyleSheet(m_styles.value(dir.exists()));
 }
@@ -115,18 +116,29 @@ void PicoForm::setBinDir(QString dn)
 void PicoForm::setPicoDir(QString dn)
 {
 	ui->picoDir->setText(dn);
+	int i = dn.lastIndexOf('/');
+	if (i >= 0)
+	{
+		dn = dn.left(i);
+	}
 	QDir dir(dn);
+	// cdUp() does not work is dir not exists !
 	while (! dir.exists())
 	{
-		dir.cdUp();
+		int i = dn.lastIndexOf('/');
+		if (i >= 0)
+		{
+			dn = dn.left(i);
+		}
+		dir.setPath(dn);
 	}
-	qDebug() << Q_FUNC_INFO << dir << dn;
 	const QStringList sdir = m_picoDirWatcher->directories();
 	if (! sdir.isEmpty())
 	{
 		m_picoDirWatcher->removePaths(sdir);
 	}
 	m_picoDirWatcher->addPath(dir.absolutePath());
+//	qDebug() << Q_FUNC_INFO << dir << dn << m_picoDirWatcher->directories();
 }
 
 bool PicoForm::chkBin()

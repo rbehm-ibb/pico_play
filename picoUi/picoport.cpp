@@ -14,7 +14,7 @@ PicoPort::PicoPort(QObject *parent)
 		m_baud = QSerialPort::baudRate();
 	}
 //	qDebug() << Q_FUNC_INFO << device() << m_baud;
-	startTimer(1000);
+	startTimer(100);
 }
 
 PicoPort::~PicoPort()
@@ -38,6 +38,13 @@ void PicoPort::lostPortErrorSl()
 
 void PicoPort::timerEvent(QTimerEvent *event)
 {
+	static bool inside = false;
+	if (inside)
+	{
+		qDebug() << Q_FUNC_INFO << inside;
+		return;
+	}
+	inside = true;
 	Q_UNUSED(event)
 	bool exist = QFile::exists(m_devInfo.systemLocation());
 	if (isOpen())
@@ -52,16 +59,24 @@ void PicoPort::timerEvent(QTimerEvent *event)
 	else if (exist)
 	{
 //		qDebug() << Q_FUNC_INFO << "c" << exist;
-		setPort(m_devInfo);
-		if (! open(QIODevice::ReadWrite))
+		QElapsedTimer timer;
+		timer.start();
+		while (timer.elapsed() < 1000)
 		{
-			qWarning() << Q_FUNC_INFO << portName() << errorString();
-			return;
+		}
+		setPort(m_devInfo);
+		setBaudRate(m_baud);
+		while (! open(QIODevice::ReadWrite))
+		{
+			qWarning() << Q_FUNC_INFO << timer.elapsed() * 1e-3 << portName() << errorString();
+			if (timer.elapsed() > 10 * 1000)
+				break;;
 		}
 		setBaudRate(m_baud);
 		setParity(QSerialPort::NoParity);
 		setDataBits(QSerialPort::Data8);
 		setFlowControl(QSerialPort::NoFlowControl);
-		emit devChanged(true);
+		emit devChanged(isOpen());
 	}
+	inside = false;
 }

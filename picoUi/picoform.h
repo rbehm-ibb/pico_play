@@ -32,7 +32,7 @@ private slots:
 	void on_actionResetPico_triggered();
 	void on_actionSelPicoDir_triggered();
 	void devChanged(bool  on);
-	void directoryChanged(const QString &path);
+	void binDirectoryChanged(const QString &path);
 	void picoDirectoryChanged(const QString &path);
 
 private:
