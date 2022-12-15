@@ -9,12 +9,13 @@
 
 #include "ibserialportline.h"
 
-class PicoPort : public IBSerialPort
+class PicoPort : public QSerialPort
 {
 	Q_OBJECT
 public:
 	PicoPort(QObject *parent);
 	~PicoPort();
+	QString device() const;
 	void boot();
 signals:
 	void  devChanged(bool  on);
@@ -25,7 +26,10 @@ private slots:
 	// QObject interface
 protected:
 	void timerEvent(QTimerEvent *event) override;
-	uint m_baud;
+	static const uint16_t m_vid = 0x2e8a;
+	static const uint16_t m_pid = 0x000a;
+	QSerialPortInfo m_devInfo;
+	qint32 m_baud;
 };
 
 #endif // PICOPORT_H

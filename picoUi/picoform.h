@@ -35,6 +35,8 @@ private slots:
 	void binDirectoryChanged(const QString &path);
 	void picoDirectoryChanged(const QString &path);
 
+	void on_reset_clicked();
+
 private:
 	Ui::PicoForm *ui;
 	PicoPort *m_port;
@@ -43,7 +45,15 @@ private:
 	QMap<bool,QString> m_styles;
 	void setBinDir(QString dn);
 	void setPicoDir(QString dn);
-	bool chkBin();
+	void chkBin();
+	bool m_hasBin, m_hasPico;
+	void chkDownload();
+
+	// QWidget interface
+protected:
+	void dragEnterEvent(QDragEnterEvent *event) override;
+	void dragMoveEvent(QDragMoveEvent *event) override;
+	void dropEvent(QDropEvent *event) override;
 };
 
 #endif // PICOFORM_H

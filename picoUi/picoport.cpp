@@ -7,19 +7,26 @@
 #include "picoport.h"
 
 PicoPort::PicoPort(QObject *parent)
-	: IBSerialPort(0x2e8a, 0x000a, QString(), 115200, parent)
+	: QSerialPort(parent)
 {
-	if (isOpen())
-	{
-		m_baud = QSerialPort::baudRate();
-	}
+	m_baud = 115200;
 //	qDebug() << Q_FUNC_INFO << device() << m_baud;
-	startTimer(100);
+	startTimer(500);
 }
 
 PicoPort::~PicoPort()
 {
 	qDebug() << Q_FUNC_INFO;
+}
+
+QString PicoPort::device() const
+{
+	QString s("%1:%2\nSN:%3");
+	if (m_devInfo.isNull())
+	{
+		return "--:--";
+	}
+	return s.arg(m_devInfo.systemLocation()).arg(m_baud).arg(m_devInfo.serialNumber());
 }
 
 void PicoPort::boot()
@@ -45,6 +52,25 @@ void PicoPort::timerEvent(QTimerEvent *event)
 		return;
 	}
 	inside = true;
+	if (m_devInfo.isNull())	// non found yet
+	{
+		foreach (QSerialPortInfo spi, QSerialPortInfo::availablePorts())
+		{
+	//		qDebug() << Q_FUNC_INFO << hex << spi.portName() << spi.vendorIdentifier() << spi.productIdentifier() << spi.serialNumber();
+			if (spi.vendorIdentifier() == m_vid && spi.productIdentifier() == m_pid)
+			{
+				m_devInfo = spi;
+//				setObjectName(spi.description());
+//				setPort(spi);
+//				if (! open(QIODevice::ReadWrite))
+//				{
+//					qWarning() << Q_FUNC_INFO << portName() << errorString();
+//					return;
+//				}
+				break;
+			}
+		}
+	}
 	Q_UNUSED(event)
 	bool exist = QFile::exists(m_devInfo.systemLocation());
 	if (isOpen())

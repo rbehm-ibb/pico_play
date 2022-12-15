@@ -61,17 +61,51 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="picolab">
        <property name="text">
         <string>PicoPort</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QLineEdit" name="picoPort">
-       <property name="readOnly">
+     <item row="5" column="1">
+      <widget class="QPushButton" name="download">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>Download</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
+         <normaloff>:/bottom</normaloff>:/bottom</iconset>
+       </property>
+       <property name="checkable">
         <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QPushButton" name="reset">
+       <property name="text">
+        <string>Reset</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
+         <normaloff>:/stdicons/launch.svgz</normaloff>:/stdicons/launch.svgz</iconset>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLabel" name="picoPort">
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="text">
+        <string>TextLabel</string>
        </property>
       </widget>
      </item>
@@ -80,8 +114,8 @@
   </layout>
   <action name="actionViewBin">
    <property name="icon">
-    <iconset resource="rsc/rsc.qrc">
-     <normaloff>:/eye.png</normaloff>:/eye.png</iconset>
+    <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
+     <normaloff>:/stdicons/eye.png</normaloff>:/stdicons/eye.png</iconset>
    </property>
    <property name="text">
     <string>ViewBin</string>
@@ -94,15 +128,6 @@
    </property>
    <property name="text">
     <string>SelBin</string>
-   </property>
-  </action>
-  <action name="actionResetPico">
-   <property name="icon">
-    <iconset resource="../../../../../Qt/qt-library/lib/utils/ledicon/ledicons.qrc">
-     <normaloff>:/led/LED_red.png</normaloff>:/led/LED_red.png</iconset>
-   </property>
-   <property name="text">
-    <string>ResetPico</string>
    </property>
   </action>
   <action name="actionSelPicoDir">
@@ -126,7 +151,6 @@
  </widget>
  <resources>
   <include location="rsc/rsc.qrc"/>
-  <include location="../../../../../Qt/qt-library/lib/utils/ledicon/ledicons.qrc"/>
   <include location="../../../../../Qt/qt-library/lib/utils/stdicons.qrc"/>
  </resources>
  <connections/>

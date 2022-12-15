@@ -15,14 +15,14 @@ PicoForm::PicoForm(QWidget *parent)
 	, m_port(new PicoPort(this))
 	, m_binDirWatcher(new QFileSystemWatcher(this))
 	, m_picoDirWatcher(new QFileSystemWatcher(this))
+	, m_hasBin(false)
+	, m_hasPico(false)
 {
 	ui->setupUi(this);
 	m_styles.insert(false, "* { background: #ffff60; }");
 	m_styles.insert(true, "* { background: #60ff60; }");
 	ui->binDir->addAction(ui->actionSelBin, QLineEdit::TrailingPosition);
 	ui->binDir->addAction(ui->actionViewBin, QLineEdit::TrailingPosition);
-	ui->picoPort->addAction(ui->actionResetPico, QLineEdit::TrailingPosition);
-//	ui->picoPort->addAction(ui->actionMinicom, QLineEdit::TrailingPosition);
 	ui->picoDir->addAction(ui->actionSelPicoDir, QLineEdit::TrailingPosition);
 	connect(m_port, &PicoPort::devChanged, this, &PicoForm::devChanged);
 	connect(m_binDirWatcher, &QFileSystemWatcher::directoryChanged, this, &PicoForm::binDirectoryChanged);
@@ -30,6 +30,8 @@ PicoForm::PicoForm(QWidget *parent)
 	devChanged(m_port->isOpen());
 	setBinDir(Config::stringValue("picoForm/bindir"));
 	setPicoDir(Config::stringValue("picoForm/picoDir"));
+	setAcceptDrops(true);
+	ui->picoPort->setStyleSheet("* { background: white; }");
 }
 
 PicoForm::~PicoForm()
@@ -42,7 +44,8 @@ PicoForm::~PicoForm()
 void PicoForm::changeEvent(QEvent *e)
 {
 	QWidget::changeEvent(e);
-	switch (e->type()) {
+	switch (e->type())
+	{
 	case QEvent::LanguageChange:
 		ui->retranslateUi(this);
 		break;
@@ -83,21 +86,25 @@ void PicoForm::devChanged(bool on)
 {
 	ui->picolab->setStyleSheet(m_styles.value(on));
 	ui->picoPort->setText(m_port->device());
-	ui->actionResetPico->setEnabled(on);
+	ui->reset->setEnabled(on);
 }
 
 void PicoForm::binDirectoryChanged(const QString &path)
 {
-	qDebug() << Q_FUNC_INFO << path;
+	Q_UNUSED(path)
+//	qDebug() << Q_FUNC_INFO << path;
 	chkBin();
 }
 
 void PicoForm::picoDirectoryChanged(const QString &path)
 {
-	qDebug() << Q_FUNC_INFO << path;
+	Q_UNUSED(path)
+//	qDebug() << Q_FUNC_INFO << path;
 	setPicoDir(ui->picoDir->text());
 	QDir dir(ui->picoDir->text());
-	ui->picodirlab->setStyleSheet(m_styles.value(dir.exists()));
+	m_hasPico = dir.exists();
+	ui->picodirlab->setStyleSheet(m_styles.value(m_hasPico));
+	chkDownload();
 }
 
 void PicoForm::setBinDir(QString dn)
@@ -141,29 +148,92 @@ void PicoForm::setPicoDir(QString dn)
 //	qDebug() << Q_FUNC_INFO << dir << dn << m_picoDirWatcher->directories();
 }
 
-bool PicoForm::chkBin()
+void PicoForm::chkBin()
 {
 	const QStringList sdir = m_binDirWatcher->directories();
-//	qDebug()  <<  Q_FUNC_INFO << sdir;
+	m_hasBin =  false;
 	if (! sdir.isEmpty())
 	{
 		QDir dir (sdir.first(), "*.uf2", QDir::NoSort, QDir::Files);
 		const QStringList fns = dir.entryList();
-//		qDebug() << Q_FUNC_INFO << dir << fns;
 		if (! fns.isEmpty())
 		{
 			ui->binFile->setText(fns.first());
 			ui->binflab->setStyleSheet(m_styles.value(true));
-			return true;
+			m_hasBin = true;
 		}
 		else
 		{
 			ui->binFile->setText(QString());
 			ui->binflab->setStyleSheet(m_styles.value(false));
-			return false;
 		}
 	}
-	return false;
+	chkDownload();
+	return;
 }
 
+void PicoForm::chkDownload()
+{
+	qDebug() << Q_FUNC_INFO << m_hasBin << m_hasPico;
+	if (m_hasBin && m_hasPico)
+	{
+		ui->download->setEnabled(true);
+	}
+	else
+	{
+		ui->download->setEnabled(false);
+	}
+}
 
+void PicoForm::dragEnterEvent(QDragEnterEvent *event)
+{
+	event->setAccepted(event->mimeData()->hasUrls());
+}
+
+void PicoForm::dragMoveEvent(QDragMoveEvent *event)
+{
+	if ((childAt(event->pos()) == ui->binDir) && event->mimeData()->hasUrls())
+	{
+		const QList<QUrl> urls = event->mimeData()->urls();
+		if (urls.count() == 1)
+		{
+			const QUrl url = urls.first();
+			if (url.isLocalFile())
+			{
+//				qDebug() << Q_FUNC_INFO << url.toLocalFile();
+				QFileInfo fi( url.toLocalFile());
+				if (fi.isDir())
+				{
+					event->accept();
+					return;
+				}
+			}
+		}
+	}
+	event->ignore();
+}
+
+void PicoForm::dropEvent(QDropEvent *event)
+{
+	if ((childAt(event->pos()) == ui->binDir) && event->mimeData()->hasUrls())
+	{
+		const QList<QUrl> urls = event->mimeData()->urls();
+		if (urls.count() == 1)
+		{
+			const QUrl url = urls.first();
+			if (url.isLocalFile())
+			{
+				QFileInfo fi( url.toLocalFile());
+				if (fi.isDir())
+				{
+					setBinDir(fi.absoluteFilePath());
+				}
+			}
+		}
+	}
+}
+
+void PicoForm::on_reset_clicked()
+{
+	m_port->boot();
+}

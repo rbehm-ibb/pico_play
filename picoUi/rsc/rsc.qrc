@@ -3,6 +3,5 @@
         <file>defaults.rc</file>
         <file>styles.css</file>
         <file>logo.png</file>
-        <file>eye.png</file>
     </qresource>
 </RCC>
