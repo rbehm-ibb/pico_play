@@ -16,9 +16,9 @@ Console::Console(QWidget *parent)
 {
 	setWindowTitle(QCoreApplication::applicationName() + ": Terminal");
 //	setWindowIcon(QIcon(":/icons/pics/project-terminal.png"));
-	QRect r = Config::value("ui_pos/console", QRect(QPoint(0, 0), QSize(640, 480))).toRect();
-	move(r.topLeft());
-	resize(r.size()); // initial size
+//	QRect r = Config::value("ui_pos/console", QRect(QPoint(0, 0), QSize(640, 480))).toRect();
+//	move(r.topLeft());
+//	resize(r.size()); // initial size
 
 	setWordWrapMode(QTextOption::WordWrap);
 
@@ -26,10 +26,6 @@ Console::Console(QWidget *parent)
 	clear->setShortcut(QKeySequence("Alt+C"));
 	connect(clear, &QAction::triggered, this, &Console::clear);
 	addAction(clear);
-	QAction *date = new QAction("Date", this);
-	date->setShortcut(QKeySequence("Alt+D"));
-	connect(date, &QAction::triggered, this, &Console::sendDate);
-	addAction(date);
 }
 
 void Console::clear()
@@ -121,16 +117,6 @@ void Console::resizeEvent(QResizeEvent *e)
 	QPlainTextEdit::resizeEvent(e);
 }
 
-void Console::sendDate()
-{
-	QString dt(" #%1 DATE! #%2 TIME! #%3 DAY\r");
-	QDateTime cdt = QDateTime::currentDateTime();
-	dt = dt.arg(cdt.toString("yyMMdd")).arg(cdt.toString("HHmmss")).arg(cdt.date().dayOfWeek());
-//	qDebug() << dt;
-	sendPort(dt);
-	sendPort("CR .DT\r");
-}
-
 void Console::charRxd(char ch)
 {
 //	qDebug() << Q_FUNC_INFO << hex << uint(ch) << dec;
@@ -140,9 +126,6 @@ void Console::charRxd(char ch)
 	{
 	case 0x0d:
 		return;		// ignore
-	case 0x12:
-		sendDate();
-		return;
 	case 0x0c:
 		setPlainText("");
 		return;

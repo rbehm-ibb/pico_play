@@ -19,8 +19,8 @@ PicoForm::PicoForm(QWidget *parent)
 	, m_hasPico(false)
 {
 	ui->setupUi(this);
-	m_styles.insert(false, "* { background: #ffff60; }");
-	m_styles.insert(true, "* { background: #60ff60; }");
+	m_styles.insert(false, "* { background: #ffffc0; }");
+	m_styles.insert(true, "* { background: #a0ff80; }");
 	ui->binDir->addAction(ui->actionSelBin, QLineEdit::TrailingPosition);
 	ui->binDir->addAction(ui->actionViewBin, QLineEdit::TrailingPosition);
 	ui->binFile->addAction(ui->actionDownload, QLineEdit::TrailingPosition);

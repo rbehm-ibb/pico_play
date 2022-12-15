@@ -20,26 +20,17 @@ signals:
 public slots:
 	void clear();
 	void charRxd(char ch);
-	void sendDate();
 private:
 
 	void sendPort(QString s);
-
-	bool isEcho;
-
 	int  maxcol;
 	int  maxrow;
-
 	int  wrapMode;
 	int  tabsize;
+	bool isEcho;
 
 protected:
 	void keyPressEvent(QKeyEvent *event);
 	void resizeEvent(QResizeEvent *e);
-
-
-	// QWidget interface
-protected:
-//	virtual void closeEvent(QCloseEvent *ev);
 };
 #endif
