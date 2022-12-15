@@ -11,7 +11,7 @@ PicoPort::PicoPort(QObject *parent)
 {
 	m_baud = 115200;
 //	qDebug() << Q_FUNC_INFO << device() << m_baud;
-	startTimer(500);
+	startTimer(200);
 }
 
 PicoPort::~PicoPort()
