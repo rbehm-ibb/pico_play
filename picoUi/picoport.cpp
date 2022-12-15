@@ -16,7 +16,7 @@ PicoPort::PicoPort(QObject *parent)
 
 PicoPort::~PicoPort()
 {
-	qDebug() << Q_FUNC_INFO;
+//-	qDebug() << Q_FUNC_INFO;
 }
 
 QString PicoPort::device() const
@@ -26,7 +26,7 @@ QString PicoPort::device() const
 	{
 		return "--:--";
 	}
-	return s.arg(m_devInfo.systemLocation()).arg(m_baud).arg(m_devInfo.serialNumber());
+	return s.arg(m_devInfo.portName()).arg(m_baud).arg(m_devInfo.serialNumber());
 }
 
 void PicoPort::boot()
@@ -37,9 +37,14 @@ void PicoPort::boot()
 	}
 }
 
-void PicoPort::lostPortErrorSl()
+//void PicoPort::lostPortErrorSl()
+//{
+//	qDebug() << Q_FUNC_INFO;
+//}
+
+void PicoPort::sendSerial(QByteArray bytes)
 {
-	qDebug() << Q_FUNC_INFO;
+	QSerialPort::write(bytes);
 }
 
 

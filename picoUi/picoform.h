@@ -29,13 +29,12 @@ protected:
 private slots:
 	void on_actionViewBin_triggered();
 	void on_actionSelBin_triggered();
-	void on_actionResetPico_triggered();
 	void on_actionSelPicoDir_triggered();
 	void devChanged(bool  on);
 	void binDirectoryChanged(const QString &path);
 	void picoDirectoryChanged(const QString &path);
-
 	void on_reset_clicked();
+	void on_actionDownload_triggered();
 
 private:
 	Ui::PicoForm *ui;
@@ -48,6 +47,7 @@ private:
 	void chkBin();
 	bool m_hasBin, m_hasPico;
 	void chkDownload();
+	void download();
 
 	// QWidget interface
 protected:

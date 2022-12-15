@@ -22,7 +22,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QWidget" name="widget" native="true"/>
+     <widget class="Console" name="console" native="true"/>
     </item>
    </layout>
   </widget>
@@ -47,44 +47,21 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionClear"/>
   </widget>
   <widget class="QDockWidget" name="picoDock">
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="PicoForm" name="dockWidgetContents"/>
+   <widget class="PicoForm" name="picoForm"/>
   </widget>
-  <action name="actionBoot">
+  <action name="actionClear">
    <property name="icon">
-    <iconset resource="../../../../../Qt/qt-library/lib/utils/ledicon/ledicons.qrc">
-     <normaloff>:/led/LED_red.png</normaloff>:/led/LED_red.png</iconset>
+    <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
+     <normaloff>:/fileclose</normaloff>:/fileclose</iconset>
    </property>
    <property name="text">
-    <string>Boot</string>
-   </property>
-   <property name="statusTip">
-    <string extracomment="PICO to  Boot mode"/>
-   </property>
-  </action>
-  <action name="actionGetBin">
-   <property name="icon">
-    <iconset resource="rsc/rsc.qrc">
-     <normaloff>:/logo.png</normaloff>:/logo.png</iconset>
-   </property>
-   <property name="text">
-    <string>GetBin</string>
-   </property>
-   <property name="statusTip">
-    <string extracomment="Select bin src dir"/>
-   </property>
-  </action>
-  <action name="actionViewDir">
-   <property name="icon">
-    <iconset resource="rsc/rsc.qrc">
-     <normaloff>:/eye.png</normaloff>:/eye.png</iconset>
-   </property>
-   <property name="text">
-    <string>ViewDir</string>
+    <string>Clear</string>
    </property>
   </action>
  </widget>
@@ -100,10 +77,15 @@
    <header>picoform.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>Console</class>
+   <extends>QWidget</extends>
+   <header>console.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources>
-  <include location="rsc/rsc.qrc"/>
-  <include location="../../../../../Qt/qt-library/lib/utils/ledicon/ledicons.qrc"/>
+  <include location="../../../../../Qt/qt-library/lib/utils/stdicons.qrc"/>
  </resources>
  <connections/>
 </ui>

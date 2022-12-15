@@ -24,6 +24,11 @@ public:
 public slots:
 	void quit();
 private slots:
+	void readRxdDataSlot();
+//	void  devChanged(bool on);
+//	void sendSerial(QByteArray bytes);
+
+	void on_actionClear_triggered();
 
 private:
 	Ui::MainWindow *ui;

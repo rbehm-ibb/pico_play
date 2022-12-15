@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>237</width>
-    <height>131</height>
+    <width>223</width>
+    <height>174</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -68,34 +68,6 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QPushButton" name="download">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Download</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
-         <normaloff>:/bottom</normaloff>:/bottom</iconset>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="0">
-      <widget class="QPushButton" name="reset">
-       <property name="text">
-        <string>Reset</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
-         <normaloff>:/stdicons/launch.svgz</normaloff>:/stdicons/launch.svgz</iconset>
-       </property>
-      </widget>
-     </item>
      <item row="4" column="1">
       <widget class="QLabel" name="picoPort">
        <property name="frameShape">
@@ -106,6 +78,24 @@
        </property>
        <property name="text">
         <string>TextLabel</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QCheckBox" name="download">
+       <property name="text">
+        <string>Auto-Download</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QPushButton" name="reset">
+       <property name="text">
+        <string>Boot</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
+         <normaloff>:/stdicons/launch.svgz</normaloff>:/stdicons/launch.svgz</iconset>
        </property>
       </widget>
      </item>
@@ -139,13 +129,13 @@
     <string>SelPicoDir</string>
    </property>
   </action>
-  <action name="actionMinicom">
+  <action name="actionDownload">
    <property name="icon">
     <iconset resource="../../../../../Qt/qt-library/lib/utils/stdicons.qrc">
-     <normaloff>:/right</normaloff>:/right</iconset>
+     <normaloff>:/bottom</normaloff>:/bottom</iconset>
    </property>
    <property name="text">
-    <string>Minicom</string>
+    <string>Download</string>
    </property>
   </action>
  </widget>

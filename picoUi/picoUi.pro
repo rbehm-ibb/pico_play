@@ -50,15 +50,17 @@ QT += serialport
 DEFINES +=
 
 HEADERS += \
-	ibserialport.h \
-	ibserialportline.h \
+#	ibserialport.h \
+#	ibserialportline.h \
+	console.h \
 	mainwindow.h \
 	picoform.h \
 	picoport.h
 
 SOURCES += \
-	ibserialport.cpp \
-	ibserialportline.cpp \
+#	ibserialport.cpp \
+#	ibserialportline.cpp \
+	console.cpp \
 	main.cpp \
 	mainwindow.cpp \
 	picoform.cpp \

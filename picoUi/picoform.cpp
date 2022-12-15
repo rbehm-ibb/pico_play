@@ -23,6 +23,7 @@ PicoForm::PicoForm(QWidget *parent)
 	m_styles.insert(true, "* { background: #60ff60; }");
 	ui->binDir->addAction(ui->actionSelBin, QLineEdit::TrailingPosition);
 	ui->binDir->addAction(ui->actionViewBin, QLineEdit::TrailingPosition);
+	ui->binFile->addAction(ui->actionDownload, QLineEdit::TrailingPosition);
 	ui->picoDir->addAction(ui->actionSelPicoDir, QLineEdit::TrailingPosition);
 	connect(m_port, &PicoPort::devChanged, this, &PicoForm::devChanged);
 	connect(m_binDirWatcher, &QFileSystemWatcher::directoryChanged, this, &PicoForm::binDirectoryChanged);
@@ -32,12 +33,15 @@ PicoForm::PicoForm(QWidget *parent)
 	setPicoDir(Config::stringValue("picoForm/picoDir"));
 	setAcceptDrops(true);
 	ui->picoPort->setStyleSheet("* { background: white; }");
+	chkDownload();
+	ui->download->setChecked(Config::boolValue("picoForm/autodl"));
 }
 
 PicoForm::~PicoForm()
 {
 	Config::setValue("picoForm/bindir", ui->binDir->text());
 	Config::setValue("picoForm/picoDir", ui->picoDir->text());
+	Config::setValue("picoForm/autodl", ui->download->isChecked());
 	delete ui;
 }
 
@@ -66,11 +70,6 @@ void PicoForm::on_actionSelBin_triggered()
 	{
 		setBinDir(dn);
 	}
-}
-
-void PicoForm::on_actionResetPico_triggered()
-{
-	m_port->boot();
 }
 
 void PicoForm::on_actionSelPicoDir_triggered()
@@ -174,15 +173,17 @@ void PicoForm::chkBin()
 
 void PicoForm::chkDownload()
 {
-	qDebug() << Q_FUNC_INFO << m_hasBin << m_hasPico;
-	if (m_hasBin && m_hasPico)
+	qDebug() << Q_FUNC_INFO << m_hasBin << m_hasPico << ui->download->isChecked();
+	ui->actionDownload->setEnabled(m_hasBin && m_hasPico);
+	if (m_hasBin && m_hasPico && ui->download->isChecked())
 	{
-		ui->download->setEnabled(true);
+		on_actionDownload_triggered();
 	}
-	else
-	{
-		ui->download->setEnabled(false);
-	}
+}
+
+void PicoForm::download()
+{
+	qDebug() << Q_FUNC_INFO;
 }
 
 void PicoForm::dragEnterEvent(QDragEnterEvent *event)
@@ -236,4 +237,30 @@ void PicoForm::dropEvent(QDropEvent *event)
 void PicoForm::on_reset_clicked()
 {
 	m_port->boot();
+}
+
+void PicoForm::on_actionDownload_triggered()
+{
+	if (m_hasBin && m_hasPico)
+	{
+		qDebug() << Q_FUNC_INFO;
+		QDir dir(ui->binDir->text());
+		QString bfn(dir.absoluteFilePath(ui->binFile->text()));
+		QFile f(bfn);
+		if (! f.exists())
+		{
+			qWarning() << Q_FUNC_INFO << f.fileName() << "not found";
+			return;
+		}
+		dir.setPath(ui->picoDir->text());
+		QString dfn(dir.absoluteFilePath(ui->binFile->text()));
+		qDebug() << Q_FUNC_INFO << f.fileName() << dfn;
+		sleep(1);
+		if (! f.copy(dfn))
+		{
+			qWarning() << Q_FUNC_INFO << f.fileName() << dfn << "*** no copy";
+			return;
+		}
+		f.remove();
+	}
 }

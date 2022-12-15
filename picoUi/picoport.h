@@ -7,8 +7,6 @@
 #ifndef PICOPORT_H
 #define PICOPORT_H
 
-#include "ibserialportline.h"
-
 class PicoPort : public QSerialPort
 {
 	Q_OBJECT
@@ -19,11 +17,10 @@ public:
 	void boot();
 signals:
 	void  devChanged(bool  on);
+public slots:
+	void sendSerial(QByteArray bytes);
 private slots:
-	void lostPortErrorSl();
-
-
-	// QObject interface
+//	void lostPortErrorSl();
 protected:
 	void timerEvent(QTimerEvent *event) override;
 	static const uint16_t m_vid = 0x2e8a;
