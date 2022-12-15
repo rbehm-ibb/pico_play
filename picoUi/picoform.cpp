@@ -159,6 +159,15 @@ void PicoForm::chkBin()
 		{
 			ui->binFile->setText(fns.first());
 			ui->binflab->setStyleSheet(m_styles.value(true));
+			if (! m_hasBin)	// newly on?
+			{
+				m_hasBin = true;
+				if (ui->download->isChecked() && ! m_hasPico)
+				{
+					chkDownload();
+					on_reset_clicked();
+				}
+			}
 			m_hasBin = true;
 		}
 		else
@@ -173,17 +182,12 @@ void PicoForm::chkBin()
 
 void PicoForm::chkDownload()
 {
-	qDebug() << Q_FUNC_INFO << m_hasBin << m_hasPico << ui->download->isChecked();
+//	qDebug() << Q_FUNC_INFO << m_hasBin << m_hasPico << ui->download->isChecked();
 	ui->actionDownload->setEnabled(m_hasBin && m_hasPico);
 	if (m_hasBin && m_hasPico && ui->download->isChecked())
 	{
 		on_actionDownload_triggered();
 	}
-}
-
-void PicoForm::download()
-{
-	qDebug() << Q_FUNC_INFO;
 }
 
 void PicoForm::dragEnterEvent(QDragEnterEvent *event)
@@ -243,7 +247,7 @@ void PicoForm::on_actionDownload_triggered()
 {
 	if (m_hasBin && m_hasPico)
 	{
-		qDebug() << Q_FUNC_INFO;
+//		qDebug() << Q_FUNC_INFO;
 		QDir dir(ui->binDir->text());
 		QString bfn(dir.absoluteFilePath(ui->binFile->text()));
 		QFile f(bfn);
@@ -254,7 +258,7 @@ void PicoForm::on_actionDownload_triggered()
 		}
 		dir.setPath(ui->picoDir->text());
 		QString dfn(dir.absoluteFilePath(ui->binFile->text()));
-		qDebug() << Q_FUNC_INFO << f.fileName() << dfn;
+//		qDebug() << Q_FUNC_INFO << f.fileName() << dfn;
 		sleep(1);
 		if (! f.copy(dfn))
 		{

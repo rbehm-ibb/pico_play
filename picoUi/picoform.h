@@ -47,7 +47,6 @@ private:
 	void chkBin();
 	bool m_hasBin, m_hasPico;
 	void chkDownload();
-	void download();
 
 	// QWidget interface
 protected:
