@@ -11,7 +11,7 @@
 #include "pico/stdlib.h"
 #include "pico/unique_id.h"
 #include "hardware/flash.h"
-#include "project.h"
+//#include "project.h"
 
 Debug::Debug()
 {
@@ -93,8 +93,8 @@ void Debug::showGpio()
 void Debug::showSysInfo(const char *version)
 {
 	extern char __flash_binary_end;
-	printf("\f%s BOARD=<%s>\nSDK Version %s, Chip=%d, Rom=%d\nDEF_LED=%d, LED=%d\n", version, PICO_BOARD, PICO_SDK_VERSION_STRING,  rp2040_chip_version(), rp2040_rom_version(),
-	       PICO_DEFAULT_LED_PIN, Led);
+	printf("\f%s BOARD=<%s>\nSDK Version %s, Chip=%d, Rom=%d\nDEF_LED=%d\n", version, PICO_BOARD, PICO_SDK_VERSION_STRING,  rp2040_chip_version(), rp2040_rom_version(),
+	       PICO_DEFAULT_LED_PIN);
 	char s[20];
 	pico_get_unique_board_id_string(s, sizeof(s) - 1);
 	uint l = &__flash_binary_end - ((char *)XIP_BASE);
