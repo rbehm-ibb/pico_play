@@ -1,0 +1,6 @@
+build
+*.user
+*.swp
+ibblib
+*.pdf
+st
