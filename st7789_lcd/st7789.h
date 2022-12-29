@@ -12,6 +12,9 @@
 #include "hardware/pio.h"
 #include "point.h"
 
+typedef uint16_t color_t;
+#define rgb565(r, g, b) (((r & 0x1f) << 0) | ((g & 0x3f) << 5) | ((b & 0x1f) << 11))
+
 class St7789
 {
 public:
@@ -26,6 +29,9 @@ public:
 	void setBl(bool on);
 	Rect screen() const { return m_win; }
 	void setFullScreen() { setWindow(m_screenWin); }
+	void drawHLine(uint x, uint y, uint w, color_t color);
+
+	void rainbow();
 private:
 	const PIO pio;
 	static constexpr uint sm = 0;

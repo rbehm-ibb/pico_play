@@ -187,3 +187,29 @@ void St7789::setBl(bool on)
 	cout << __PRETTY_FUNCTION__ << ":" << on << endl;
 	gpio_put(PIN_BL, on);
 }
+
+void St7789::drawHLine(uint x, uint y, uint w, color_t color)
+{
+	fillRect(Rect(Point(x, y), Size(w, 1)), color);
+	cout << __PRETTY_FUNCTION__ << ":" << hex << color << dec << endl;
+}
+
+static const color_t rainbowcolors[] =
+{
+	0xffff, 0x0000, 0x001f, 0x03ff,
+	0x07ff, 0x07e0, 0x7fe0, 0xefe0,
+	0xfbe0, 0xf800, 0xf80f, 0xf81f,
+	0x7c1f, 0x001f
+};
+
+void St7789::rainbow()
+{
+	const int n = sizeof(rainbowcolors) / sizeof(rainbowcolors[0]);
+	uint16_t w = SCREEN_WIDTH / n;
+	int d = (SCREEN_WIDTH - (w * n)) / 2;
+	for (int i = 0; i < n; ++i)
+	{
+		const Rect r(Point(0, d + i * w), Size(SCREEN_HEIGHT, w));
+		fillRect(r, rainbowcolors[i]);
+	}
+}

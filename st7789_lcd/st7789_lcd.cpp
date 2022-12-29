@@ -104,21 +104,34 @@ int main()
 			lcd.setBl(true);
 			break;
 		case 'c':
-			lcd.clear();
-			cout << lcd.screen() << endl;
-			sleep_ms(1000);
+			lcd.clear(rgb565(0, 63, 31));
+			cout << lcd.screen() << " A=" << lcd.screen().area() << endl;
+//			sleep_ms(1000);
 			break;
 		case 'w':
 			lcd.clear(0xffff);
-			sleep_ms(1000);
+//			sleep_ms(1000);
 			break;
 		case 'r':
 			lcd.clear();
 			lcd.fillRect(Rect(Point(0, 0), Size(20, 30)), 0xffff);
 			cout << lcd.screen() << " A=" << lcd.screen().area() << endl;
-			sleep_ms(1000);
-			lcd.setFullScreen();
+//			sleep_ms(1000);
+			break;
+		case 'R':
+			lcd.clear();
+			lcd.rainbow();
+//			sleep_ms(1000);
+			break;
+		case 'l':
+			lcd.clear();
+			for (int i = 0; i < 24; ++i)
+			{
+				lcd.drawHLine(0, i*10, 240, rgb565(0, 63, i*31/24));
+			}
 			break;
 		}
+		while (getchar_timeout_us(0) < 0) ;
+		lcd.setFullScreen();
 	}
 }
