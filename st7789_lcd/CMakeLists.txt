@@ -11,6 +11,7 @@ add_executable(${PROJECT_NAME}
     st7789.h st7789.cpp
     ibblib/debug.h ibblib/debug.cpp
     ibblib/ledblink.h ibblib/ledblink.cpp
+    point.h point.cpp
 )
 
 pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/st7789_lcd.pio)

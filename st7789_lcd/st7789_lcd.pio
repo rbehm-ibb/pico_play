@@ -12,11 +12,10 @@
 ; Data on OUT pin 0
 ; Clock on side-set pin 0
 
-	nop           side 0
-
+	nop		side 0
 .wrap_target
-    out pins, 1   side 1 ; stall here if no data (clock low)
-    nop           side 0
+	out pins, 1	side 1 ; stall here if no data (clock high)
+	nop		side 0
 .wrap
 
 % c-sdk {
