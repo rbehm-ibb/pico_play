@@ -21,7 +21,8 @@ public:
 		, m_reverse(reverse)
 		, m_bytes(bytes)
 		{}
-	Rect charRect(const Point &p) const { return Rect(p, Size(m_w, m_h)); }
+//	Rect charRect(const Point &p) const { return Rect(p, Size(m_w, m_h)); }
+	Size charSize() const { return Size(m_w, m_h); }
 	char first() const { return m_first; }
 
 	const uint8_t *charBytes(char c) const { return m_bytes + (c - m_first) * m_bpc; }
