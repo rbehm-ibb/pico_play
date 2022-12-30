@@ -1,4 +1,5 @@
 build
+unused
 *.user
 *.swp
 ibblib
