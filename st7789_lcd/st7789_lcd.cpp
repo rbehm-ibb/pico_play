@@ -11,10 +11,12 @@
 #include "pico/stdlib.h"
 //#include "hardware/gpio.h"
 #include "hardware/interp.h"
+#include "hardware/adc.h"
 #include "ibblib/debug.h"
 #include "ibblib/ledblink.h"
-
 #include "st7789.h"
+#include "propfont.h"
+#include "font8x16.h"
 #include "raspberry_256x256_rgb565.h"
 
 #define SCREEN_WIDTH 240
@@ -97,6 +99,17 @@ int main()
 		case 'x':
 			Debug::showGpio();
 			break;
+		case 't':
+		{
+			adc_init();
+			adc_set_temp_sensor_enabled(true);
+			adc_select_input(4);
+			int adc =  adc_read();
+			float ADC_voltage = adc * (3.3 / (4095.));
+			float temperature_celcius = 27 - (ADC_voltage - 0.706)/0.001721;
+			printf("ADC=%d ADC-V=%.1fV T=%.1fC\n", adc, ADC_voltage, temperature_celcius);
+		}
+			break;
 		case '0':
 			lcd.setBl(false);
 			break;
@@ -114,7 +127,14 @@ int main()
 			break;
 		case 'r':
 			lcd.clear();
-			lcd.fillRect(Rect(Point(0, 0), Size(20, 30)), 0xffff);
+		{
+			Rect r(Point(0,0), Size(19, 19));
+			for (int i = 0; i <= 240-20; i += 20)
+			{
+				lcd.drawRect(r, 0xffff);
+				r += Point(20, 20);
+			}
+		}
 			cout << lcd.screen() << " A=" << lcd.screen().area() << endl;
 //			sleep_ms(1000);
 			break;
@@ -127,11 +147,40 @@ int main()
 			lcd.clear();
 			for (int i = 0; i < 24; ++i)
 			{
-				lcd.drawHLine(0, i*10, 240, rgb565(0, 63, i*31/24));
+				lcd.drawHLine(Point(0, i*10), 240, rgb565(31, 63, i*31/24));
 			}
 			break;
+		case 'L':
+			lcd.clear();
+			for (int i = 0; i < 24; ++i)
+			{
+				lcd.drawVLine(Point(i*10, 0), 240, rgb565(31, 63, i*31/24));
+			}
+			break;
+		case 'C':
+			lcd.drawChar(Point(10, 10), 'G');
+			break;
+		case 's':
+			lcd.setFg(rgb565(31, 0, 0));
+			lcd.setBg(rgb565(0, 63, 31));
+			lcd.drawString("ABCDEFGHIJKLMNOPQRSTUVWYXZ\n0123456789\nabcdefghijklmnopqrstuvwxyz\n! \"§$%&/()=?`~#’-.,;:_<>|\\^");
+			break;
+		case 'p':
+			lcd.setCursor(Point(0, 0));
+			lcd.setFont(&Font8x16::font);
+			break;
+		case 'P':
+			lcd.setCursor(Point(0, 0));
+			lcd.setFont(&PropFont::font);
+			break;
+
 		}
-		while (getchar_timeout_us(0) < 0) ;
+		blink.setTime(60);
+		while (getchar_timeout_us(0) < 0)
+		{
+			blink.poll();
+		}
+		blink.setTime(300);
 		lcd.setFullScreen();
 	}
 }

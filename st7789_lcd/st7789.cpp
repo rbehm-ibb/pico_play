@@ -7,12 +7,12 @@
 #include "st7789.h"
 #include <iostream>
 #include <stdio.h>
-#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/gpio.h"
-#include "ibblib/debug.h"
+//#include "ibblib/debug.h"
 #include "st7789_lcd.pio.h"
+#include "propfont.h"
 
 using namespace std;
 
@@ -35,6 +35,10 @@ St7789::St7789()
 	: pio(pio0)
 	, m_screenWin(Point(0, 0), Size(SCREEN_WIDTH, SCREEN_HEIGHT))
 	, m_win(Point(0, 0), Size(SCREEN_WIDTH, SCREEN_HEIGHT))
+	, m_cursor(0, 0)
+	, m_font(&PropFont::font)
+	, m_fg(0xffff)
+	, m_bg(0)
 {
 	uint offset = pio_add_program(pio, &st7789_lcd_program);
 	st7789_lcd_program_init(pio, sm, offset, PIN_DIN, PIN_CLK, SERIAL_CLK_DIV);
@@ -69,7 +73,7 @@ void St7789::fillRect(const Rect &r, uint16_t color)
 {
 	setWindow(r);
 	startPixels();
-	for (int i = 0; i < r.area(); ++i)
+	for (uint i = 0; i < r.area(); ++i)
 	{
 		put(color);
 	}
@@ -92,7 +96,9 @@ void St7789::writeCmd(const uint8_t *cmd, size_t count)
 		st7789_lcd_wait_idle(pio, sm);
 		setDcCs(1, 0);
 		for (size_t i = 0; i < count - 1; ++i)
+		{
 			st7789_lcd_put(pio, sm, *cmd++);
+		}
 	}
 	st7789_lcd_wait_idle(pio, sm);
 	setDcCs(1, 1);
@@ -107,10 +113,7 @@ void St7789::writeCmd(const uint8_t cmd)
 	setDcCs(1, 0);
 }
 
-void St7789::setWindow(const Point s, const Point e)
-{
-	setWindow(Rect(s, e));
-}
+
 
 void St7789::setWindow(const Rect &r)
 {
@@ -188,10 +191,91 @@ void St7789::setBl(bool on)
 	gpio_put(PIN_BL, on);
 }
 
-void St7789::drawHLine(uint x, uint y, uint w, color_t color)
+void St7789::drawHLine(const Point &p, uint w, color_t color)
 {
-	fillRect(Rect(Point(x, y), Size(w, 1)), color);
+	fillRect(Rect(p, Size(w, 1)), color);
 	cout << __PRETTY_FUNCTION__ << ":" << hex << color << dec << endl;
+}
+
+void St7789::drawVLine(const Point &p, uint w, color_t color)
+{
+	fillRect(Rect(p, Size(1, w)), color);
+}
+
+void St7789::drawRect(const Rect &r, color_t color)
+{
+	drawHLine(r.tl(), r.width(), color);
+	drawHLine(r.tl() + Point(0, r.height()), r.width(), color);
+	drawVLine(r.tl(), r.height(), color);
+	drawVLine(r.tl() + Point(r.width(), 0), r.height(), color);
+}
+
+void St7789::drawChar(const Point &p, char c)
+{
+	if ((c < m_font->first()) || (c >= 0xff))
+	{
+		cout << __PRETTY_FUNCTION__ << " invalid char " << hex << int(c) << dec << endl;
+		return;
+	}
+	const Rect r = m_font->charRect(p);
+	setWindow(r);
+	startPixels();
+	uint8_t mask = m_font->reverse() ? 0x80 : 0x01;
+	const uint8_t *bytes = m_font->charBytes(c);
+	for (int i = 0; i < m_font->pixc(); ++i)
+	{
+		put(*bytes & mask ? m_fg : m_bg);
+		if (m_font->reverse())
+		{
+			mask >>= 1;
+			if (mask == 0)
+			{
+				++bytes;
+				mask = 0x80;
+			}
+		}
+		else
+		{
+			mask <<= 1;
+			if (mask == 0)
+			{
+				++bytes;
+				mask = 0x01;
+			}
+		}
+	}
+	st7789_lcd_wait_idle(pio, sm);
+	setDcCs(1, 1);
+	m_cursor = r.tr() + Point(1, 0);
+}
+
+void St7789::drawChar(char c)
+{
+	drawChar(m_cursor, c);
+	if (m_cursor.x() >= SCREEN_WIDTH)
+	{
+		m_cursor.setX(0);
+		m_cursor.setY(m_cursor.y() + m_font->h());
+	}
+}
+
+void St7789::drawString(const char *s)
+{
+	while (*s)
+	{
+		switch (*s)
+		{
+		case '\r':
+		case '\n':
+			m_cursor.setX(0);
+			m_cursor.setY(m_cursor.y() + m_font->h());
+			break;
+		default:
+			drawChar(*s);
+			break;
+		}
+		++s;
+	}
 }
 
 static const color_t rainbowcolors[] =
@@ -213,3 +297,12 @@ void St7789::rainbow()
 		fillRect(r, rainbowcolors[i]);
 	}
 }
+
+
+
+
+
+
+
+
+

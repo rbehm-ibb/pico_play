@@ -12,13 +12,16 @@ add_executable(${PROJECT_NAME}
     ibblib/debug.h ibblib/debug.cpp
     ibblib/ledblink.h ibblib/ledblink.cpp
     point.h point.cpp
+    ibfont.h ibfont.cpp
+    propfont.h propfont.cpp
+    font8x16.h font8x16.cpp
 )
 
 pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/st7789_lcd.pio)
 
 #target_sources(${PROJECT_NAME} PRIVATE st7789_lcd.c)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE pico_stdlib hardware_pio hardware_interp)
+target_link_libraries(${PROJECT_NAME} PRIVATE pico_stdlib hardware_pio hardware_interp hardware_adc)
 pico_add_extra_outputs(${PROJECT_NAME})
 
 # add url via pico_set_program_url
