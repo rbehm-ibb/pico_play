@@ -57,6 +57,7 @@ St7789::St7789()
 	init();
 	gpio_put(PIN_BL, 1);
 
+	clear();
 }
 
 void St7789::clear(uint16_t color)

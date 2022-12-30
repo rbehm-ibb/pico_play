@@ -1,11 +1,11 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.20)
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 set(PICO_BOARD pico-X)
 pico_sdk_init()
-project(st7789 C CXX ASM)
+project(st7789 VERSION 0.1.1 LANGUAGES C CXX ASM)
 
 add_executable(${PROJECT_NAME}
-    st7789_lcd.cpp
+    main.cpp
     raspberry_256x256_rgb565.h
     st7789_lcd.pio
     st7789.h st7789.cpp
@@ -27,3 +27,4 @@ pico_add_extra_outputs(${PROJECT_NAME})
 # add url via pico_set_program_url
 #example_auto_set_url(pio_st7789_lcd)
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
+

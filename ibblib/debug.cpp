@@ -24,20 +24,20 @@ void Debug::dump(const void *src, size_t size, const char *title)
 	{
 		printf("%s\n", title);
 	}
-	const uint8_t *p = static_cast<const uint8_t*>(src);
-	char line[4*16 + 20];
+	const uint8_t *p = static_cast<const uint8_t *>(src);
+	char line[4 * 16 + 20];
 	for (uint i = 0; i < size; i += 16, p += 16)
 	{
 		memset(line, ' ', sizeof(line));
 		line[sizeof (line) - 1] = '\0';
 		for (uint j = 0; j < 16; ++j)
 		{
-			if (i+j >= size)
+			if (i + j >= size)
 			{
 				break;
 			}
 			char s[3];
-			char *pp = &line[j*3];
+			char *pp = &line[j * 3];
 			sprintf(s, "%02x", p[j]);
 			pp[0] = s[0];
 			pp[1] = s[1];
@@ -47,9 +47,9 @@ void Debug::dump(const void *src, size_t size, const char *title)
 			{
 				c = '.';
 			}
-			line[3*16 + 1+j] = c;
+			line[3 * 16 + 1 + j] = c;
 		}
-			printf("%p: %s\n", p, line);
+		printf("%p: %s\n", p, line);
 	}
 }
 
@@ -93,12 +93,11 @@ void Debug::showGpio()
 void Debug::showSysInfo(const char *version)
 {
 	extern char __flash_binary_end;
-	printf("\f%s BOARD=<%s>\nSDK Version %s, Chip=%d, Rom=%d\nDEF_LED=%d\n", version, PICO_BOARD, PICO_SDK_VERSION_STRING,  rp2040_chip_version(), rp2040_rom_version(),
-	       PICO_DEFAULT_LED_PIN);
+	printf("\f%s\nBOARD=<%s> SDK Version %s, Chip=%d, Rom=%d\n", version, PICO_BOARD, PICO_SDK_VERSION_STRING,  rp2040_chip_version(), rp2040_rom_version());
 	char s[20];
 	pico_get_unique_board_id_string(s, sizeof(s) - 1);
 	uint l = &__flash_binary_end - ((char *)XIP_BASE);
-	printf("<%s> pgmsz=%u/%uk FSz=%dM\n", s, l, l/1024, PICO_FLASH_SIZE_BYTES / 1024 / 1024);
+	printf("id=<%s> pgmsize=%u/%uk Flashsize=%dM\n", s, l, l / 1024, PICO_FLASH_SIZE_BYTES / 1024 / 1024);
 }
 
 
