@@ -8,7 +8,7 @@
 #include <iostream>
 #include <math.h>
 
-#include "pico/stdlib.h"
+//#include "pico/stdlib.h"
 //#include "hardware/gpio.h"
 #include "hardware/interp.h"
 #include "hardware/adc.h"
@@ -68,8 +68,8 @@ int main()
 			theta -= theta_max;
 		int32_t rotate[4] =
 		{
-			(int32_t)(cosf(theta) *(1 << UNIT_LSB)), (int32_t)(-sinf(theta) *(1 << UNIT_LSB)),
-			(int32_t)(sinf(theta) *(1 << UNIT_LSB)), (int32_t)(cosf(theta) *(1 << UNIT_LSB))
+			(int32_t)(cosf(theta) * (1 << UNIT_LSB)), (int32_t)(-sinf(theta) * (1 << UNIT_LSB)),
+			(int32_t)(sinf(theta) * (1 << UNIT_LSB)), (int32_t)(cosf(theta) * (1 << UNIT_LSB))
 		};
 		interp0->base[0] = rotate[0];
 		interp0->base[1] = rotate[2];
@@ -106,9 +106,27 @@ int main()
 			adc_select_input(4);
 			int adc =  adc_read();
 			float ADC_voltage = adc * (3.3 / (4095.));
-			float temperature_celcius = 27 - (ADC_voltage - 0.706)/0.001721;
+			float temperature_celcius = 27 - (ADC_voltage - 0.706) / 0.001721;
 			printf("ADC=%d ADC-V=%.1fV T=%.1fC\n", adc, ADC_voltage, temperature_celcius);
 		}
+		break;
+		case 'T':
+			blink.setTime(100);
+			lcd.clear();
+			do
+			{
+				int adc =  adc_read();
+				float ADC_voltage = adc * (3.3 / (4095.));
+				float temperature_celcius = 27 - (ADC_voltage - 0.706) / 0.001721;
+				char s[20];
+				sprintf(s, "%5.1fC", temperature_celcius);
+				lcd.setBg(0xffff);
+				lcd.setFg(rgb565(255, 0, 0));
+				lcd.setCursor(50, 120);
+				lcd.drawString(s);
+				blink.poll();
+			}
+			while (getchar_timeout_us(100000) < 0);
 			break;
 		case '0':
 			lcd.setBl(false);
@@ -117,7 +135,7 @@ int main()
 			lcd.setBl(true);
 			break;
 		case 'c':
-			lcd.clear(rgb565(0, 63, 31));
+			lcd.clear(rgb565(63, 63, 0));
 			cout << lcd.screen() << " A=" << lcd.screen().area() << endl;
 //			sleep_ms(1000);
 			break;
@@ -127,14 +145,15 @@ int main()
 			break;
 		case 'r':
 			lcd.clear();
-		{
-			Rect r(Point(0,0), Size(19, 19));
-			for (int i = 0; i <= 240-20; i += 20)
 			{
-				lcd.drawRect(r, 0xffff);
-				r += Point(20, 20);
+				Rect r(Point(0, 0), Size(19, 19));
+				for (int i = 0; i <= 240 - 20; i += 20)
+				{
+					lcd.fillRect(r, rgb565(31, 0, 0));
+					lcd.drawRect(r, 0xffff);
+					r += Point(20, 20);
+				}
 			}
-		}
 			cout << lcd.screen() << " A=" << lcd.screen().area() << endl;
 //			sleep_ms(1000);
 			break;
@@ -147,23 +166,37 @@ int main()
 			lcd.clear();
 			for (int i = 0; i < 24; ++i)
 			{
-				lcd.drawHLine(Point(0, i*10), 240, rgb565(31, 63, i*31/24));
+				lcd.drawHLine(Point(0, i * 10), 240, rgb565(31, 63, i * 31 / 24));
 			}
 			break;
 		case 'L':
 			lcd.clear();
 			for (int i = 0; i < 24; ++i)
 			{
-				lcd.drawVLine(Point(i*10, 0), 240, rgb565(31, 63, i*31/24));
+				lcd.drawVLine(Point(i * 10, 0), 240, rgb565(31, 63, i * 31 / 24));
 			}
 			break;
 		case 'C':
 			lcd.drawChar(Point(10, 10), 'G');
 			break;
 		case 's':
+			lcd.clear();
 			lcd.setFg(rgb565(31, 0, 0));
 			lcd.setBg(rgb565(0, 63, 31));
-			lcd.drawString("ABCDEFGHIJKLMNOPQRSTUVWYXZ\n0123456789\nabcdefghijklmnopqrstuvwxyz\n! \"§$%&/()=?`~#’-.,;:_<>|\\^");
+		{
+			lcd.setCursor(1, 1);
+			const char s[] = "ABCDEFGHIJKL\n0123456789"; // \nabcdefghijklmnopqrstuvwxyz@\n! \"$%&/()=?`´~#’-.,;:_<>|\\^";
+			Point p = lcd.cursor() + Point(-1, -1);
+			Rect r = Rect(p, lcd.charSize(s));
+			r += Size(1, 1);
+			r.setTl(p);
+			lcd.drawString(s);
+			lcd.drawRect(r, rgb565(31, 63, 31));
+			cout << p << r << lcd.win() << "A=" << lcd.win().area() << endl;
+		}
+			break;
+		case 'S':
+			cout << lcd.charSize("ABCDE\nFGHIJ");
 			break;
 		case 'p':
 			lcd.setCursor(Point(0, 0));

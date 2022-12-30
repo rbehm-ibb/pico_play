@@ -45,6 +45,10 @@ public:
 
 	Point cursor() const { return m_cursor; }
 	void setCursor(Point newCursor) { m_cursor = newCursor; }
+	void setCursor(int x, int y) { m_cursor = Point(x, y); }
+	Size charSize() const;
+	Size charSize(const char *s) const;
+	Rect win() const { return m_win; }
 
 private:
 	const PIO pio;

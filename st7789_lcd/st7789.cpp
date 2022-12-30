@@ -73,10 +73,12 @@ void St7789::fillRect(const Rect &r, uint16_t color)
 {
 	setWindow(r);
 	startPixels();
-	for (uint i = 0; i < r.area(); ++i)
+	const uint16_t npix = r.area();
+	for (uint i = 0; i < npix; ++i)
 	{
 		put(color);
 	}
+	setDcCs(1, 1);
 }
 
 void St7789::setDcCs(bool dc, bool cs)
@@ -194,12 +196,13 @@ void St7789::setBl(bool on)
 void St7789::drawHLine(const Point &p, uint w, color_t color)
 {
 	fillRect(Rect(p, Size(w, 1)), color);
-	cout << __PRETTY_FUNCTION__ << ":" << hex << color << dec << endl;
+//	cout << __PRETTY_FUNCTION__ << ":" << hex << color << dec << p << w << endl;
 }
 
 void St7789::drawVLine(const Point &p, uint w, color_t color)
 {
 	fillRect(Rect(p, Size(1, w)), color);
+//	cout << __PRETTY_FUNCTION__ << ":" << hex << color << dec << p << w << endl;
 }
 
 void St7789::drawRect(const Rect &r, color_t color)
@@ -212,12 +215,17 @@ void St7789::drawRect(const Rect &r, color_t color)
 
 void St7789::drawChar(const Point &p, char c)
 {
+	if (! m_font)
+	{
+		cout << __PRETTY_FUNCTION__ << " no font" << endl;
+		return;
+	}
 	if ((c < m_font->first()) || (c >= 0xff))
 	{
 		cout << __PRETTY_FUNCTION__ << " invalid char " << hex << int(c) << dec << endl;
 		return;
 	}
-	const Rect r = m_font->charRect(p);
+	const Rect r(p, m_font->charSize());
 	setWindow(r);
 	startPixels();
 	uint8_t mask = m_font->reverse() ? 0x80 : 0x01;
@@ -298,11 +306,48 @@ void St7789::rainbow()
 	}
 }
 
+Size St7789::charSize() const
+{
+	if (! m_font)
+	{
+		cout << __PRETTY_FUNCTION__ << " no font" << endl;
+		return Size();
+	}
+	return m_font->charSize();
+}
 
-
-
-
-
-
+Size St7789::charSize(const char *s) const
+{
+	// this assumes a fixed font;
+	if (! m_font)
+	{
+		cout << __PRETTY_FUNCTION__ << " no font" << endl;
+		return Size();
+	}
+	Rect r;
+	const Size cs(m_font->charSize());
+	int h = cs.h(), w = 0, maxw = 0;
+	while (*s)
+	{
+		Point tl;
+		switch (*s)
+		{
+		case '\r':
+		case '\n':
+			h += cs.h();
+			w = 0;
+			break;
+		default:
+			w += cs.w();
+			if (maxw < w)
+			{
+				maxw = w;
+			}
+			break;
+		}
+		++s;
+	}
+	return Size(maxw, h);
+}
 
 
