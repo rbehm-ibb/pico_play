@@ -1,0 +1,8 @@
+build
+unused
+*.user
+*.swp
+ibblib
+*.pdf
+*.spin
+st
