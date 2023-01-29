@@ -7,23 +7,24 @@
 #include <iostream>
 #include "hardware/gpio.h"
 #include "hardware/spi.h"
-#include "spi1.h"
+#include "spi0.h"
 
 using namespace std;
 
-static spi_inst_t * constexpr spidev = spi1;
-constexpr int Mosi = 15;
-constexpr int Miso = 12;
-constexpr int Sck  =14;
+static spi_inst_t *spidev = spi0;
+constexpr int Mosi = PICO_DEFAULT_SPI_TX_PIN;
+constexpr int Miso = PICO_DEFAULT_SPI_RX_PIN;
+constexpr int Sck  = PICO_DEFAULT_SPI_SCK_PIN;
 
 
-Spi1::Spi1(int cs, int cd, int res)
+Spi0::Spi0(int cs, int cd, int res)
 	: m_cs(cs)
 	, m_cd(cd)
 	, m_res(res)
 {
-	cout << __PRETTY_FUNCTION__ << " cs=" << m_cs << " cd=" << m_cd << " res=" << m_res << endl;
-	cout << "Mosi=" << Mosi << " Miso=" << Miso << " Sck=" << Sck << " port=" << spi_get_index(spidev) << endl;
+	cout << __PRETTY_FUNCTION__
+	     << " Mosi=" << Mosi << " Miso=" << Miso << " Sck=" << Sck << " port="
+	     << spi_get_index(spidev) << " cs=" << m_cs << " cd=" << m_cd << " res=" << m_res << endl;
 	gpio_init(m_cs);
 	gpio_set_dir(m_cs, GPIO_OUT);
 	gpio_put(m_cs, 1);
@@ -35,61 +36,61 @@ Spi1::Spi1(int cs, int cd, int res)
 	gpio_put(m_res, 0);
 }
 
-void Spi1::start()
+void Spi0::start()
 {
 	spi_set_format(spidev, 8, SPI_CPOL_0, SPI_CPHA_0, SPI_MSB_FIRST);
 	gpio_set_function(Miso, GPIO_FUNC_SPI);	// miso
 	gpio_set_function(Sck, GPIO_FUNC_SPI);	// sck
 	gpio_set_function(Mosi, GPIO_FUNC_SPI);	// mosi
 	spi_init(spidev, 1 * 100 * 1000);
-	Spi1::csOff();
-	Spi1::cdOn();
-	Spi1::reset();
+	Spi0::csOff();
+	Spi0::cdOn();
+	Spi0::reset();
 }
 
-void Spi1::csOn()
+void Spi0::csOn()
 {
 //	waitSpi();
 	gpio_put(m_cs, 0);
 }
 
-void Spi1::csOff()
+void Spi0::csOff()
 {
 //	waitSpi();
 	gpio_put(m_cs, 1);
 }
 
-void Spi1::cdOn()
+void Spi0::cdOn()
 {
 //	waitSpi();
 	gpio_put(m_cd, 1);
 }
 
-void Spi1::cdOff()
+void Spi0::cdOff()
 {
 //	waitSpi();
 	gpio_put(m_cd, 0);
 }
 
-void Spi1::reset()
+void Spi0::reset()
 {
 	gpio_put(m_res, 0);
 	busy_wait_ms(100);
 	gpio_put(m_res, 1);
 }
 
-void Spi1::tx_blocking(uint16_t d)
+void Spi0::tx_blocking(uint16_t d)
 {
 	spi_write16_blocking(spidev, &d, 1);
 }
 
-void Spi1::tx(uint16_t d)
+void Spi0::tx(uint16_t d)
 {
 	uint8_t *dd = (uint8_t*)(&d);
 	spi_write_blocking(spidev, dd, 2);
 }
 
-void Spi1::tx(uint16_t cmd, const uint16_t *d, size_t count)
+void Spi0::tx(uint16_t cmd, const uint16_t *d, size_t count)
 {
 	cdOn();
 	csOn();

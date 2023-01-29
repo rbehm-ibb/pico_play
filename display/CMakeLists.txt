@@ -27,7 +27,7 @@ add_executable(${PROJECT_NAME}
 	rect.h rect.cpp
 	displaybase.h displaybase.cpp
 	spibase.h spibase.cpp
-	spi1.h spi1.cpp
+	spi0.h spi0.cpp
 )
 
 #target_sources(test pio_spi.c pio_spi.h )
@@ -38,6 +38,7 @@ pico_add_extra_outputs(${PROJECT_NAME})
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME}
 	pico_stdlib
+	pico_stdio_usb pico_platform pico_util pico_bootsel_via_double_reset
 	pico_multicore  hardware_spi
 )
 # pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/spi.pio)

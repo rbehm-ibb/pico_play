@@ -80,6 +80,10 @@
 #define PICO_DEFAULT_SPI_SCK_PIN 2
 #endif
 
+#ifndef PICO_DEFAULT_SPI_CSN_PIN
+#define PICO_DEFAULT_SPI_CSN_PIN 1
+#endif
+
 //------------- FLASH -------------//
 
 #define PICO_BOOT_STAGE2_CHOOSE_W25Q128 1

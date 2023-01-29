@@ -26,6 +26,7 @@ public:
 	void setBr(const IbPoint &newBr) { m_br = newBr; }
 	void moveBy(const IbPoint &p) { m_tl += p; m_br += p; }
 	IbSize size() const { return IbSize(m_br.x() - m_tl.x() + 1, m_br.y() - m_tl.y() + 1); }
+	void setSize(const IbSize &sz) { m_br.setX(m_tl.x() + sz.w() -1); m_br.setY(m_tl.y() + sz.h() -1); }
 	coord_t w() const { return size().w(); }
 	coord_t h() const { return size().h(); }
 	coord_t left() const { return m_tl.x(); }

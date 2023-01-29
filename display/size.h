@@ -24,6 +24,7 @@ public:
 	bool operator==(const IbSize &p) const { return m_w == p.m_w && m_h == p.m_h; }
 	bool operator!=(const IbSize &p) const { return !(*this == p); }
 	IbSize &operator+=(const IbSize &p) { m_w += p.m_w; m_h += p.m_h; return *this; }
+	IbSize &operator+=(const coord_t delta) { m_w += delta; m_h += delta; return *this; }
 	friend inline IbSize operator+(const IbSize &p1, const IbSize &p2);
 	friend std::ostream &operator<<(std::ostream &s, const IbSize &sz);
 

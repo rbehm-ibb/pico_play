@@ -63,7 +63,7 @@ static void uif()
 	case '+':
 		if (++angle > 180)
 		{
-			angle = 180tty;
+			angle = 180;
 		}
 		servoWrite(&servo, angle);
 		cout << "Angle=" << int(angle) << endl;
