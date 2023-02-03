@@ -11,7 +11,8 @@
 
 using namespace std;
 
-static spi_inst_t * constexpr spidev = spi1;
+//static spi_inst_t *spidev = spi0;
+static spi_inst_t * const spidev = spi1;
 constexpr int Mosi = 15;
 constexpr int Miso = 12;
 constexpr int Sck  =14;

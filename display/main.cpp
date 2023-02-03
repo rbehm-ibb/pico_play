@@ -10,13 +10,13 @@
 #include <bit>
 #include "pico/stdlib.h"
 #include "hardware/gpio.h"
-#include "../ibblib/debug.h"
-#include "../ibblib/ledblink.h"
-#include "../ibblib/gpioinit.h"
+#include "gpioinit.h"
+#include "debug.h"
+#include "ledblink.h"
 
 #include "point.h"
 #include "rect.h"
-#include "spi0.h"
+#include "spihw.h"
 
 using namespace std;
 
@@ -37,7 +37,7 @@ static const IoDef io[] =
 GpioInit gpio(io);
 
 static void uif();
-Spi0 *ibSpi1 = 0;
+SpiHw *ibSpi1 = 0;
 
 int main()
 {
@@ -50,7 +50,7 @@ int main()
 	}
 	blink.setTime(300);
 	Debug::showSysInfo(version);
-	ibSpi1 = new Spi0(PICO_DEFAULT_SPI_CSN_PIN, 5, 6);
+	ibSpi1 = new SpiHw(SpiHw::hwSpi1); // PICO_DEFAULT_SPI_CSN_PIN, 5, 6);
 	gpio.showGpio();
 	ibSpi1->start();
 

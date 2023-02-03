@@ -11,6 +11,7 @@ arddef.cpp
 arddef.h
 canvas.cpp
 canvas.h
+disptest.ino
 global.h
 point.cpp
 point.h

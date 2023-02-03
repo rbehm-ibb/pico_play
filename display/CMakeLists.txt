@@ -1,5 +1,5 @@
 # Set minimum required version of CMake
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.17)
 
 # Include build functions from Pico SDK
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
@@ -14,20 +14,22 @@ set(CMAKE_CXX_STANDARD 17)
 # Creates a pico-sdk subdirectory in our project for the libraries
 pico_sdk_init()
 
+#add_subdirectory(/home/behm/dvlsw/@ibb/pico_play/ibblib)
+#target_include_directories(/home/behm/dvlsw/@ibb/pico_play/ibblib)
+include_directories(/home/behm/dvlsw/@ibb/pico_play/ibblib)
+include_directories(./lib1)
+
+file(GLOB FILESLIB ./lib/*.h .lib/*.cpp)
+file(GLOB FILESIBB ../ibblib/*.h ../ibblib/*.cpp)
+file(GLOB FILESSRC *.cpp)
+file(GLOB FILESH *.h)
+
 # Tell CMake where to find the executable source file
 add_executable(${PROJECT_NAME}
-	main.cpp
-	../ibblib/picoX.h
-	../ibblib/debug.h ../ibblib/debug.cpp
-	../ibblib/ledblink.h ../ibblib/ledblink.cpp
-	../ibblib/gpioinit.h ../ibblib/gpioinit.cpp
-	ibdispdef.h
-	point.h point.cpp
-	size.h size.cpp
-	rect.h rect.cpp
-	displaybase.h displaybase.cpp
-	spibase.h spibase.cpp
-	spi0.h spi0.cpp
+	${FILESSRC}
+	${FILESH}
+#	${FILESLIB}
+	${FILESIBB}
 )
 
 #target_sources(test pio_spi.c pio_spi.h )
