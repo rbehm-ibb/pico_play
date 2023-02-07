@@ -17,6 +17,7 @@ public:
 	void setTime(absolute_time_t t);
 private:
 	const uint m_pin;
+	const uint32_t m_pinMask;
 	uint m_ms;
 	absolute_time_t m_time;
 	bool m_on;

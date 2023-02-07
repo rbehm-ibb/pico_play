@@ -16,7 +16,7 @@ pico_sdk_init()
 
 #add_subdirectory(/home/behm/dvlsw/@ibb/pico_play/ibblib)
 #target_include_directories(/home/behm/dvlsw/@ibb/pico_play/ibblib)
-include_directories(/home/behm/dvlsw/@ibb/pico_play/ibblib)
+include_directories(../ibblib)
 include_directories(./lib1)
 
 file(GLOB FILESLIB ./lib/*.h .lib/*.cpp)
@@ -28,7 +28,6 @@ file(GLOB FILESH *.h)
 add_executable(${PROJECT_NAME}
 	${FILESSRC}
 	${FILESH}
-#	${FILESLIB}
 	${FILESIBB}
 )
 

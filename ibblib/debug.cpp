@@ -7,11 +7,7 @@
 #include "debug.h"
 #include <stdio.h>
 #include <string.h>
-#include "pico/stdio.h"
-#include "pico/stdlib.h"
 #include "pico/unique_id.h"
-#include "hardware/flash.h"
-
 
 void Debug::dump(const void *src, size_t size, const char *title)
 {

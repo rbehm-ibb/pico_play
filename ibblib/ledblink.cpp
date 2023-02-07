@@ -11,6 +11,7 @@
 
 LedBlink::LedBlink(uint pin, uint ms)
 	: m_pin(pin)
+	, m_pinMask(1U << m_pin)
 	, m_ms(ms)
 	, m_on(true)
 {
@@ -27,8 +28,9 @@ void LedBlink::poll()
 	if (t > m_time)
 	{
 		m_time = delayed_by_ms(t, m_ms);
-		gpio_put(m_pin, m_on);
-		m_on = ! m_on;
+		gpio_xor_mask(m_pinMask);
+//		gpio_put(m_pin, m_on);
+//		m_on = ! m_on;
 	}
 }
 

@@ -8,8 +8,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <bit>
-#include "pico/stdlib.h"
-#include "hardware/gpio.h"
+//#include "pico/stdlib.h"
+//#include "hardware/gpio.h"
 #include "gpioinit.h"
 #include "debug.h"
 #include "ledblink.h"
@@ -26,8 +26,8 @@ static const IoDef io[] =
 	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx" },
 	{ 1, IoDef::Out, 1, IoDef::None, "/Cs" },
 	{ 2, IoDef::Out, 0, IoDef::None, "Sck" },
-	{ 3, IoDef::In,  0, IoDef::None, "Miso" },
-	{ 4, IoDef::Out,  0, IoDef::None, "Mosi" },
+	{ 3, IoDef::Out,  0, IoDef::None, "Mosi" },
+	{ 4, IoDef::In,  0, IoDef::None, "Miso" },
 	{ 5, IoDef::Out, 1, IoDef::None, "D/C" },
 	{ 6, IoDef::Out, 1, IoDef::None, "Res" },
 	{ 25, IoDef::Out, 1, IoDef::None, "Led2" },
@@ -50,8 +50,8 @@ int main()
 	}
 	blink.setTime(300);
 	Debug::showSysInfo(version);
-	ibSpi1 = new SpiHw(SpiHw::hwSpi1); // PICO_DEFAULT_SPI_CSN_PIN, 5, 6);
 	gpio.showGpio();
+	ibSpi1 = new SpiHw(SpiHw::hwSpi0); // PICO_DEFAULT_SPI_CSN_PIN, 5, 6);
 	ibSpi1->start();
 
 	int n = 0;
