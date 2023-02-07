@@ -28,7 +28,7 @@ static const IoDef io[] =
 GpioInit gpio(io);
 
 static void uif();
-LedBlink *led = 0;
+LedBlink *blink = 0;
 int main()
 {
 	stdio_usb_init();
@@ -36,20 +36,19 @@ int main()
 //	gpio_set_function(0, GPIO_FUNC_UART);
 //	gpio_set_function(1, GPIO_FUNC_UART);
 //	uart_init(uart0, 38400);
-	LedBlink blink(PICO_DEFAULT_LED_PIN, 100);
-	led = &blink;
+	LedBlink _blink(PICO_DEFAULT_LED_PIN, 100);
+	blink = &_blink;
 	while (! stdio_usb_connected())
 	{
-		blink.poll();
+		blink->poll();
 	}
-	blink.setTime(300);
+	blink->setTime(300);
 	Debug::showSysInfo(version);
 	cout << "LED " << PICO_DEFAULT_LED_PIN << endl;
 
-	int n = 0;
 	while (1)
 	{
-		blink.poll();
+//		blink.poll();
 		uif();
 	}
 }
@@ -59,7 +58,7 @@ static void uif()
 	static const Cmd cmd[] =
 	{
 		{ 1, "info" },
-		{ 2, "io" },
+		{ 2, "." },
 		{ 3, "led" },
 		{ 4, "pin" },
 		{ 0, nullptr },
@@ -67,36 +66,42 @@ static void uif()
 
 	static CmdLine cmdline(cmd);
 	int a1, a2, a3;
-	int cid = cmdline.poll();
-	if (cid >= -1)
+	blink->poll();
+	switch (cmdline.poll())
 	{
-		cout << "cmdline->"  << cid;
+	case CmdLine::NoIn:
+		return;
+	case CmdLine::Unknown:
+	{
 		auto arg = cmdline.args();
+		cout << "CmdLine";
 		for  (const char *s : arg)
 		{
 			cout << " T<" << s << ">";
 		}
 		cout << endl;
-		switch (cid)
-		{
-		case 1:
-			Debug::showSysInfo(version);
-			break;
-		case 2:
-			gpio.showGpio();
-			break;
-		case 3:
-			a1 = cmdline.num(1, 16);
-			cout << "led " << a1 << endl;
-			led->setTime(a1);
-			break;
-		case 4:
-			a1 = cmdline.num(1);
-			a2 = cmdline.num(2);
-			cout << "pin " << a1 << ',' << a2 << endl;
-			gpio_put(a1, a2);
-			break;
-		}
-		cmdline.clear();
 	}
+	break;
+	case CmdLine::Empty:
+		cout << "NoInput" << endl;
+		break;
+	case 1:
+		Debug::showSysInfo(version);
+		break;
+	case 2:
+		gpio.showGpio();
+		break;
+	case 3:
+		a1 = cmdline.num(1, 16);
+		cout << "led " << a1 << endl;
+		blink->setTime(a1);
+		break;
+	case 4:
+		a1 = cmdline.num(1);
+		a2 = cmdline.num(2);
+		cout << "pin " << a1 << ',' << a2 << endl;
+		gpio_put(a1, a2);
+		break;
+	}
+	cmdline.clear();
 }

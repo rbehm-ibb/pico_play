@@ -18,7 +18,8 @@ struct Cmd
 class CmdLine
 {
 public:
-	CmdLine(const Cmd * const cmds);
+	enum R{ NoIn=-10, Unknown = -1, Empty=0 };
+	CmdLine(const Cmd * const cmds, const char *dlm = " ,");
 	int poll();
 	void clear();
 	const std::vector<const char *> &args() const { return m_args; }
@@ -29,6 +30,7 @@ protected:
 	int evalLine();
 	static constexpr int maxline = 80;
 	int m_linelen;
+	const char * const m_dlm;
 	char m_line[maxline+1];
 	const Cmd * const m_cmds;
 	std::vector<const char*> m_args;

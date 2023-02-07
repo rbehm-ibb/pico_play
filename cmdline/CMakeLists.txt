@@ -32,7 +32,9 @@ pico_add_extra_outputs(${PROJECT_NAME})
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME}
 	pico_stdlib
-	pico_multicore pico_mem_ops hardware_pio
+	pico_mem_ops
+	hardware_pio
+#	pico_multicore
 )
 # pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/spi.pio)
 

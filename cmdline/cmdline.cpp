@@ -13,8 +13,10 @@
 
 using namespace std;
 
-CmdLine::CmdLine(const Cmd *const cmds)
+
+CmdLine::CmdLine(const Cmd * const cmds, const char *dlm)
 	: m_cmds(cmds)
+	, m_dlm(dlm)
 {
 	clear();
 }
@@ -41,13 +43,13 @@ int CmdLine::evalLine()
 {
 	//	cout << __PRETTY_FUNCTION__ << "<" << m_line << ">" << endl;
 	m_args.clear();
-	for (char *t = strtok(m_line, " "); t; t = strtok(nullptr, " "))
+	for (char *t = strtok(m_line, m_dlm); t; t = strtok(nullptr, m_dlm))
 	{
 		m_args.push_back(t);
 	}
 	if (m_args.empty())
 	{
-		return 0;
+		return Empty;
 	}
 	const char *cmd = m_args.front();
 	for (const Cmd *p = m_cmds; p->cmd; ++p)
@@ -58,14 +60,14 @@ int CmdLine::evalLine()
 		}
 	}
 //	clear();
-	return -1;
+	return Unknown;
 }
 
 int CmdLine::poll()
 {
 	const int c = getchar_timeout_us(0);
 	if (c < 0)
-		return -10;
+		return NoIn;
 //	cout << hex << c << dec << ": -->";
 	switch (c)
 	{
@@ -82,6 +84,7 @@ int CmdLine::poll()
 		break;
 	case '\r':
 	case '\n':
+		cout << endl;
 		return evalLine();
 		break;
 	default:
@@ -95,6 +98,6 @@ int CmdLine::poll()
 		}
 	}
 //	cout << "<" << m_line << ">" << endl;
-	return -10;
+	return NoIn;
 }
 
