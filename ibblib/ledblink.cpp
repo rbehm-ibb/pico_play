@@ -10,27 +10,23 @@
 #include "hardware/gpio.h"
 
 LedBlink::LedBlink(uint pin, uint ms)
-	: m_pin(pin)
-	, m_pinMask(1U << m_pin)
+	: /*m_pin(pin)
+	, */m_pinMask(1U << pin)
 	, m_ms(ms)
-	, m_on(true)
 {
-	gpio_init(m_pin);
-	gpio_set_dir(m_pin, GPIO_OUT);
-	gpio_put(m_pin, m_on);
+	gpio_init(pin);
+	gpio_set_dir(pin, GPIO_OUT);
+	gpio_put(pin, 1);
 	m_time = delayed_by_ms(get_absolute_time(), m_ms);
 }
 
 void LedBlink::poll()
 {
 	absolute_time_t t = get_absolute_time();
-//	absolute_time_t dt = (t - m_time) / 1000;
 	if (t > m_time)
 	{
 		m_time = delayed_by_ms(t, m_ms);
 		gpio_xor_mask(m_pinMask);
-//		gpio_put(m_pin, m_on);
-//		m_on = ! m_on;
 	}
 }
 
