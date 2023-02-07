@@ -8,10 +8,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
-//#include "hardware/gpio.h"
-#include "../ibblib/debug.h"
-#include "../ibblib/ledblink.h"
-#include "../ibblib/gpioinit.h"
+#include "debug.h"
+#include "ledblink.h"
+#include "gpioinit.h"
 #include "cmdline.h"
 
 using namespace std;

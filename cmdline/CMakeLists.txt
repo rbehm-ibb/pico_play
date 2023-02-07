@@ -14,14 +14,16 @@ set(CMAKE_CXX_STANDARD 17)
 # Creates a pico-sdk subdirectory in our project for the libraries
 pico_sdk_init()
 
+include_directories(../ibblib)
+file(GLOB FILESIBB ../ibblib/*.h ../ibblib/*.cpp)
+file(GLOB FILESSRC *.cpp)
+file(GLOB FILESH *.h)
+
 # Tell CMake where to find the executable source file
 add_executable(${PROJECT_NAME}
-	main.cpp
-	../ibblib/picoX.h
-	../ibblib/debug.h ../ibblib/debug.cpp
-	../ibblib/ledblink.h ../ibblib/ledblink.cpp
-	../ibblib/gpioinit.h ../ibblib/gpioinit.cpp
-	cmdline.h cmdline.cpp
+	${FILESSRC}
+	${FILESH}
+	${FILESIBB}
 )
 
 #target_sources(test pio_spi.c pio_spi.h )
