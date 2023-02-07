@@ -17,7 +17,7 @@ pico_sdk_init()
 # Tell CMake where to find the executable source file
 add_executable(${PROJECT_NAME}
 	main.cpp
-	picoX.h
+	../ibblib/picoX.h
 	../ibblib/debug.h ../ibblib/debug.cpp
 	../ibblib/ledblink.h ../ibblib/ledblink.cpp
 	../ibblib/gpioinit.h ../ibblib/gpioinit.cpp
@@ -31,7 +31,7 @@ pico_add_extra_outputs(${PROJECT_NAME})
 
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME}
-	pico_stdlib
+	pico_stdlib pico_mem_ops 
 	pico_multicore  hardware_pio
 )
 # pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/spi.pio)
