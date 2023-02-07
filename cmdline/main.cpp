@@ -18,10 +18,22 @@ using namespace std;
 const char version[] = "CmdLine 0.2";
 static const IoDef io[] =
 {
-	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx" },
-	{ 1, IoDef::Out, 0, IoDef::PUp, "Rx" },
-	{ 24, IoDef::Out, 1, IoDef::None, "Led1" },
-	{ 25, IoDef::Out, 1, IoDef::None, "Led2" },
+	{ 26, IoDef::Out, 0, IoDef::PUp, "A0" },
+	{ 27, IoDef::Out, 0, IoDef::PUp, "A1" },
+	{ 28, IoDef::Out, 0, IoDef::PUp, "A2" },
+	{ 29, IoDef::Out, 0, IoDef::PUp, "A3" },
+	{ 4, IoDef::Out, 0, IoDef::PUp, "SDA" },
+	{ 5, IoDef::Out, 0, IoDef::PUp, "SCL" },
+	{ 6, IoDef::Out, 1, IoDef::PUp, "Tx" },
+	{ 7, IoDef::Out, 0, IoDef::PUp, "Rx" },
+	{ 8, IoDef::Out, 0, IoDef::PUp, "SCK" },
+	{ 9, IoDef::Out, 0, IoDef::PUp, "Miso" },
+	{ 10, IoDef::Out, 0, IoDef::PUp, "Mosi" },
+	{ 11, IoDef::Out, 0, IoDef::PUp, "NeoPwr" },
+	{ 15, IoDef::Out, 0, IoDef::PUp, "NeoPix" },
+	{ PICO_LED_R, IoDef::Out, 1, IoDef::None, "LedR" },
+	{ PICO_LED_G, IoDef::Out, 1, IoDef::None, "LedG" },
+	{ PICO_LED_B, IoDef::Out, 1, IoDef::None, "LedB" },
 	{ -1, IoDef::In, 0, IoDef::None, nullptr }
 };
 GpioInit gpio(io);
@@ -35,7 +47,9 @@ int main()
 //	gpio_set_function(0, GPIO_FUNC_UART);
 //	gpio_set_function(1, GPIO_FUNC_UART);
 //	uart_init(uart0, 38400);
-	LedBlink _blink(PICO_DEFAULT_LED_PIN, 100);
+	LedBlink _blink(PICO_LED_B, 100);
+	LedBlink blinkG(PICO_LED_G, 200);
+	LedBlink blinkR(PICO_LED_R, 150);
 	blink = &_blink;
 	while (! stdio_usb_connected())
 	{
@@ -47,7 +61,8 @@ int main()
 
 	while (1)
 	{
-//		blink.poll();
+		blinkG.poll();
+		blinkR.poll();
 		uif();
 	}
 }

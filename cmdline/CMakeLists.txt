@@ -6,7 +6,8 @@ include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
 # Set name of project (as PROJECT_NAME) and C/C++ standards
 project(cmdline C CXX ASM)
-set(PICO_BOARD picoX)
+#set(PICO_BOARD picoX)
+set(PICO_BOARD seeed_xiao_rp2040)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
@@ -24,6 +25,7 @@ add_executable(${PROJECT_NAME}
 	${FILESSRC}
 	${FILESH}
 	${FILESIBB}
+	/home/behm/pico/pico-sdk/src/boards/include/boards/seeed_xiao_rp2040.h
 )
 
 #target_sources(test pio_spi.c pio_spi.h )
