@@ -8,32 +8,43 @@
 #define CMDLINE_H
 
 #include <vector>
+#include <iostream>
 
-struct Cmd
-{
-	int id;
-	const char *cmd;
-};
 
 class CmdLine
 {
 public:
+	class Args : public std::vector<const char*>
+	{
+		friend std::ostream &operator<<(std::ostream &s, const Args &d);
+	public:
+		Args() {}
+		const char * argn(uint n) const;
+		int num(int n, uint base = 0) const;
+	};
+
+	typedef void (*callback_t)(const Args &);
+	struct Cmd
+	{
+		const char *cmd;
+		callback_t callback;
+	};
 	enum R{ NoIn=-10, Unknown = -1, Empty=0 };
 	CmdLine(const Cmd * const cmds, const char *dlm = " ,");
 	int poll();
 	void clear();
-	const std::vector<const char *> &args() const { return m_args; }
+	const Args &args() const { return m_args; }
 	const char * argn(uint n) const;
 	int num(uint n, uint base = 0) const;
 
 protected:
-	int evalLine();
+	void evalLine();
 	static constexpr int maxline = 80;
 	int m_linelen;
-	const char * const m_dlm;
 	char m_line[maxline+1];
 	const Cmd * const m_cmds;
-	std::vector<const char*> m_args;
+	const char * const m_dlm;
+	Args m_args;
 };
 
 #endif // CMDLINE_H

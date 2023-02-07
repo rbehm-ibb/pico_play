@@ -39,7 +39,7 @@ int CmdLine::num(uint n, uint base) const
 	return strtol(argn(n), nullptr, base);
 }
 
-int CmdLine::evalLine()
+void CmdLine::evalLine()
 {
 	//	cout << __PRETTY_FUNCTION__ << "<" << m_line << ">" << endl;
 	m_args.clear();
@@ -49,18 +49,17 @@ int CmdLine::evalLine()
 	}
 	if (m_args.empty())
 	{
-		return Empty;
+		return;
 	}
 	const char *cmd = m_args.front();
 	for (const Cmd *p = m_cmds; p->cmd; ++p)
 	{
 		if (strcmp(cmd, p->cmd) == 0)
 		{
-			return p->id;
+			(*p->callback)(m_args);
+			return;
 		}
 	}
-//	clear();
-	return Unknown;
 }
 
 int CmdLine::poll()
@@ -85,7 +84,9 @@ int CmdLine::poll()
 	case '\r':
 	case '\n':
 		cout << endl;
-		return evalLine();
+		evalLine();
+		clear();
+		return 0;
 		break;
 	default:
 		if (c < ' ')
@@ -101,3 +102,23 @@ int CmdLine::poll()
 	return NoIn;
 }
 
+
+std::ostream &operator<<(std::ostream &s, const CmdLine::Args &d)
+{
+	for (const char *sd : d)
+	{
+		s << " <" << sd << ">";
+	}
+	return s;
+}
+
+const char *CmdLine::Args::argn(uint n) const
+{
+	if (n < size()) return at(n);
+	return nullptr;
+}
+
+int CmdLine::Args::num(int n, uint base) const
+{
+	return strtol(argn(n), nullptr, base);
+}

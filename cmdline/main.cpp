@@ -16,7 +16,7 @@
 
 using namespace std;
 
-const char version[] = "CmdLine 0.1";
+const char version[] = "CmdLine 0.2";
 static const IoDef io[] =
 {
 	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx" },
@@ -53,55 +53,49 @@ int main()
 	}
 }
 
+static void  info(const CmdLine::Args &)
+{
+	Debug::showSysInfo(version);
+//	cout << __PRETTY_FUNCTION__ << a << endl;
+}
+
+static void  showio(const CmdLine::Args &)
+{
+	gpio.showGpio();
+//	cout << __PRETTY_FUNCTION__ << a << endl;
+}
+
+static void  led(const CmdLine::Args &a)
+{
+//	cout << __PRETTY_FUNCTION__ << a << endl;
+	int a1 = a.num(1, 16);
+	cout << "led " << a1 << endl;
+	blink->setTime(a1);
+}
+
+static void  pin(const CmdLine::Args &a)
+{
+	cout << __PRETTY_FUNCTION__ << a << endl;
+	int a1 = a.num(1);
+	int a2 = a.num(2);
+	cout << "pin " << a1 << ',' << a2 << endl;
+	gpio_put(a1, a2);
+}
+
 static void uif()
 {
-	static const Cmd cmd[] =
+	static const CmdLine::Cmd cmd[] =
 	{
-		{ 1, "info" },
-		{ 2, "." },
-		{ 3, "led" },
-		{ 4, "pin" },
-		{ 0, nullptr },
+		{ "info", info },
+		{ ".", showio  },
+		{ "led", led },
+		{ "pin", pin },
+		{ nullptr, nullptr }
 	};
 
 	static CmdLine cmdline(cmd);
 	int a1, a2, a3;
 	blink->poll();
-	switch (cmdline.poll())
-	{
-	case CmdLine::NoIn:
-		return;
-	case CmdLine::Unknown:
-	{
-		auto arg = cmdline.args();
-		cout << "CmdLine";
-		for  (const char *s : arg)
-		{
-			cout << " T<" << s << ">";
-		}
-		cout << endl;
-	}
-	break;
-	case CmdLine::Empty:
-		cout << "NoInput" << endl;
-		break;
-	case 1:
-		Debug::showSysInfo(version);
-		break;
-	case 2:
-		gpio.showGpio();
-		break;
-	case 3:
-		a1 = cmdline.num(1, 16);
-		cout << "led " << a1 << endl;
-		blink->setTime(a1);
-		break;
-	case 4:
-		a1 = cmdline.num(1);
-		a2 = cmdline.num(2);
-		cout << "pin " << a1 << ',' << a2 << endl;
-		gpio_put(a1, a2);
-		break;
-	}
-	cmdline.clear();
+	cmdline.poll();
+	return;
 }
