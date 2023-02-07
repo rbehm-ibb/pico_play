@@ -6,8 +6,6 @@
 
 #include <string.h>
 #include <iostream>
-//#include <stdlib.h>
-//#include <stdio.h>
 #include "pico/stdlib.h"
 #include "cmdline.h"
 
@@ -28,20 +26,8 @@ void CmdLine::clear()
 	m_args.clear();
 }
 
-const char *CmdLine::argn(uint n) const
-{
-	if (n < m_args.size()) return m_args.at(n);
-	return nullptr;
-}
-
-int CmdLine::num(uint n, uint base) const
-{
-	return strtol(argn(n), nullptr, base);
-}
-
 void CmdLine::evalLine()
 {
-	//	cout << __PRETTY_FUNCTION__ << "<" << m_line << ">" << endl;
 	m_args.clear();
 	for (char *t = strtok(m_line, m_dlm); t; t = strtok(nullptr, m_dlm))
 	{
@@ -62,12 +48,11 @@ void CmdLine::evalLine()
 	}
 }
 
-int CmdLine::poll()
+void CmdLine::poll()
 {
 	const int c = getchar_timeout_us(0);
 	if (c < 0)
-		return NoIn;
-//	cout << hex << c << dec << ": -->";
+		return;
 	switch (c)
 	{
 	case '\b':
@@ -86,8 +71,7 @@ int CmdLine::poll()
 		cout << endl;
 		evalLine();
 		clear();
-		return 0;
-		break;
+		return;
 	default:
 		if (c < ' ')
 		{
@@ -98,8 +82,7 @@ int CmdLine::poll()
 			m_line[m_linelen++] = c;
 		}
 	}
-//	cout << "<" << m_line << ">" << endl;
-	return NoIn;
+	return;
 }
 
 

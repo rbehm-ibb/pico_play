@@ -10,7 +10,13 @@
 #include <vector>
 #include <iostream>
 
-
+///
+/// \brief The CmdLine class is a handler for  command input (via stdin,USB,Serial)
+///
+/// It is given a list of commands (struct Cmd ) after input of a line (\n  or \r)
+/// this line is split in Args at the define delim and the  the command list is search for the first word.
+/// If found the corresponding callback is called with the list of args.
+/// To keep CmdLine alive call  it periodically via poll.
 class CmdLine
 {
 public:
@@ -29,13 +35,10 @@ public:
 		const char *cmd;
 		callback_t callback;
 	};
-	enum R{ NoIn=-10, Unknown = -1, Empty=0 };
+
 	CmdLine(const Cmd * const cmds, const char *dlm = " ,");
-	int poll();
+	void poll();
 	void clear();
-	const Args &args() const { return m_args; }
-	const char * argn(uint n) const;
-	int num(uint n, uint base = 0) const;
 
 protected:
 	void evalLine();
