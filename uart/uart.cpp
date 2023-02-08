@@ -84,6 +84,7 @@ bool Uart::put(uint8_t c)
 #ifdef USE_TXISR
 	if (queue_try_add(&m_txq, &c))
 	{
+		// need  to (re-)start tx interr.
 		return true;
 	}
 	return false;
@@ -133,6 +134,9 @@ void Uart::uartIsr()
 		uint8_t ch = uart_getc(m_uart);
 		queue_add_blocking(&m_rxq, &ch);
 	}
+#ifdef USE_TXISR
+	// need to handle tx interr.
+#endif
 }
 
 void Uart::uart0Isr()
