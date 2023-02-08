@@ -129,7 +129,7 @@ static void  uartwrite(const CmdLine::Args &a)
 {
 	for (const char *s : a)
 	{
-		cout << __PRETTY_FUNCTION__ << " <" << s << ">" << endl;
+//		cout << __PRETTY_FUNCTION__ << " <" << s << ">" << endl;
 		uart->put(s);
 	}
 }
