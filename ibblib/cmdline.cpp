@@ -46,6 +46,7 @@ void CmdLine::evalLine()
 			return;
 		}
 	}
+	cout << "?? <" << cmd << ">" << endl;
 }
 
 void CmdLine::poll()
