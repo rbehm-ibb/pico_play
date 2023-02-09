@@ -60,7 +60,7 @@ bool SimpleUart::put(uint8_t c)
 	if (canTx())
 	{
 //		std::cout << __PRETTY_FUNCTION__  << "[" << c << "]" << std::endl;
-		uart_putc(m_uart, char(c));
+		uart_putc_raw(m_uart, char(c));
 		return true;
 	}
 	return false;
