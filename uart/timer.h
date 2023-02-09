@@ -17,13 +17,13 @@ public:
 	bool stop();
 	int id() const { return m_id; }
 	int tick() const { return m_tick; }
-	bool xxx() { bool x = xx; xx = false; return x;}
+	bool hasTick();
 private:
 	const int m_id;
 	static int tid;
 	repeating_timer_t timer;
-	int m_tick;
-	bool xx;
+	volatile int m_tick;
+	volatile bool m_hasTick;
 	static bool timer_callback(repeating_timer_t *rt);
 };
 

@@ -34,7 +34,11 @@ Uart::Uart(int uartIdx, int txPin, int rxPin, int baud)
 	, m_uartIdx(uartIdx)
 	, m_uart(uart_get_instance(uartIdx))
 {
-	assert(uartIdx = 0 || uartIdx == 1);
+	invalid_params_if(UART, uartIdx != 0 && uartIdx != 1);
+	if (uartIdx != 0 && uartIdx != 1)
+	{
+		std::cerr << __PRETTY_FUNCTION__ << " bad Uart#" << uartIdx << std::endl;
+	}
 	UartDefine &uartDef = uartDefinition[uartIdx];
 	uartDef.uart = this;
 	uart_init(m_uart, m_baud);

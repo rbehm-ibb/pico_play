@@ -8,14 +8,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "pico/util/queue.h"
-#include "hardware/irq.h"
+//#include "pico/util/queue.h"
+//#include "hardware/irq.h"
 #include "debug.h"
 #include "ledblink.h"
 #include "gpioinit.h"
 #include "cmdline.h"
 #include "simpleuart.h"
 #include "uartline.h"
+#include "uartipc.h"
 #include "timer.h"
 
 using namespace std;
@@ -52,7 +53,7 @@ static void rx();
 
 LedBlink *blink = 0;
 UartLine *uart = nullptr;
-Timer *timer = nullptr;
+Timer *timer[3] = {  nullptr };
 
 int main()
 {
@@ -76,8 +77,15 @@ int main()
 
 	uart = new UartLine(0);
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
-	timer = new Timer;
-	cout <<  "timer #" << timer->id() << endl;
+	for (int i = 0; i < count_of(timer); ++i)
+	{
+		timer[i] = new Timer;
+		cout <<  "timer #" << timer[i]->id() << endl;
+	}
+	cout << "Uart:" << sizeof(Uart) << " SimpleUart:" << sizeof(SimpleUart)
+	     << " UartLine:" << sizeof(UartLine) << " UartIpc:" << sizeof(UartIpc)
+		 << " Timer:" << sizeof(Timer)
+	     << endl;
 	while (1)
 	{
 #ifdef PICO_LED_G
@@ -148,13 +156,15 @@ static void  leadout(const CmdLine::Args &a)
 static void  start(const CmdLine::Args &a)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	timer->start();
+	int i = a.num(1);
+	timer[i]->start();
 }
 
 static void  stop(const CmdLine::Args &a)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
-	timer->stop();
+	int i = a.num(1);
+	timer[i]->stop();
 }
 
 
@@ -184,23 +194,22 @@ static void uif()
 static char line[200];
 static void rx()
 {
-	int lasttick = 0;
+	static int lasttick[count_of(timer)] = { 0 };
 	static const uint32_t mask = 1U << 2;
 	while (uart->hasRx())
 	{
 		uart->getLine(line);
 		cout << __PRETTY_FUNCTION__ << " <" << line << ">" << endl;
 	}
-	int t = timer->tick();
-	if (timer->xxx())
+	for (int i = 0; i < count_of(timer); ++i)
 	{
-		lasttick = t;
-		cout << "timer " << timer->id() << " #" << timer->tick() << endl;
+		int t = timer[i]->tick();
+		if (lasttick[i] != t)
+		{
+			lasttick[i] = t;
+			cout << "timer " << timer[i]->id() << " #" << t << endl;
+		}
+
+
 	}
-//	{
-//		gpio_set_mask(mask);
-//		char c = uart->get();
-//		gpio_clr_mask(mask);
-//		cout << '[' << hex << c << dec << "]" << flush;
-//	}
 }
