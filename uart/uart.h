@@ -12,17 +12,14 @@
 #include "hardware/uart.h"
 #include "hardware/irq.h"
 
+///
+/// \brief The Uart class is only a virtual base class for all Uart classes.
+/// It handles basic setup and interrupt handling and call a virtual function to do the real wokd.
+///
 class Uart
 {
 public:
 	Uart(int uartIdx, int txPin =  -1, int rxPin = -1, int baud = 115200);
-	bool hasrx();
-	uint8_t get();
-	bool canTx();
-	bool put(uint8_t c);
-	bool put(char c) { return put(uint8_t(c)); }
-	void put(const char *s);
-	void put(const uint8_t *s, size_t n) ;
 	int baud() const { return m_baud; }
 	void setBaud(int baud);
 	int txPin() const { return m_txPin; }
@@ -30,7 +27,6 @@ public:
 	int uartIdx() const { return m_uartIdx; }
 
 protected:
-	static constexpr int qsize = 100;
 	const int m_txPin;
 	const int m_rxPin;
 	int m_baud;
@@ -47,9 +43,7 @@ protected:
 	static UartDefine uartDefinition[2];
 	static int getTxPin(int idx, int tx);
 	static int getRxPin(int idx, int rx);
-	queue_t m_rxq;
-//	queue_t m_txq;
-	void uartIsr();
+	virtual void uartIsr() = 0;
 	static void uart0Isr();
 	static void uart1Isr();
 };

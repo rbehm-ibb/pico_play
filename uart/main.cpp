@@ -14,11 +14,11 @@
 #include "ledblink.h"
 #include "gpioinit.h"
 #include "cmdline.h"
-#include "uart.h"
+#include "simpleuart.h"
 
 using namespace std;
 
-const char version[] = "Uart 0.1";
+const char version[] = "SimpleUart 0.1";
 static const IoDef io[] =
 {
 	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx" },
@@ -36,38 +36,33 @@ static const IoDef io[] =
 	{ 27, IoDef::Out, 0, IoDef::PUp, "A1" },
 	{ 28, IoDef::Out, 0, IoDef::PUp, "A2" },
 	{ 29, IoDef::Out, 0, IoDef::PUp, "A3" },
-//	{ PICO_LED_R, IoDef::Out, 1, IoDef::None, "LedR" },
-//	{ PICO_LED_G, IoDef::Out, 1, IoDef::None, "LedG" },
-//	{ PICO_LED_B, IoDef::Out, 1, IoDef::None, "LedB" },
+#ifdef PICO_LED_G
+	{ PICO_LED_R, IoDef::Out, 1, IoDef::None, "LedR" },
+	{ PICO_LED_G, IoDef::Out, 1, IoDef::None, "LedG" },
+	{ PICO_LED_B, IoDef::Out, 1, IoDef::None, "LedB" },
+#endif
 	{ -1, IoDef::In, 0, IoDef::None, nullptr }
 };
 GpioInit gpio(io);
 
 static void uif();
 static void rx();
-static void on_uart_rx();
-static /*volatile*/ queue_t rxq;
 
 LedBlink *blink = 0;
-Uart *uart = nullptr;
+SimpleUart *uart = nullptr;
 
 int main()
 {
 	stdio_usb_init();
 	gpio.init();
-//	uart_init(uart0, 9600);
-//	gpio_set_function(0, GPIO_FUNC_UART);
-//	gpio_set_function(1, GPIO_FUNC_UART);
-//	uart_set_hw_flow(uart0, false, false);
-//	// Set our data format
-//	uart_set_format(uart0, 8, 2, UART_PARITY_NONE);
-
-//	// Turn off FIFO's - we want to do this character by character
-//	uart_set_fifo_enabled(uart0, false);
 
 	LedBlink _blink(PICO_DEFAULT_LED_PIN, 100);
-//	LedBlink blinkG(PICO_LED_G, 200);
-//	LedBlink blinkR(PICO_LED_R, 150);
+#ifdef PICO_LED_G
+	LedBlink blinkG(PICO_LED_G, 200);
+#endif
+#ifdef PICO_LED_R
+	LedBlink blinkR(PICO_LED_R, 150);
+#endif
 	blink = &_blink;
 	while (! stdio_usb_connected())
 	{
@@ -76,21 +71,16 @@ int main()
 	blink->setTime(300);
 	Debug::showSysInfo(version);
 
-	queue_init(&rxq, sizeof(uint8_t), 30);
-
-	// And set up and enable the interrupt handlers
-//	irq_set_exclusive_handler(UART0_IRQ, on_uart_rx);
-//	irq_set_enabled(UART0_IRQ, true);
-
-//	// Now enable the UART to send interrupts - RX only
-//	uart_set_irq_enables(uart0, true, false);
-
-	uart = new Uart(0);
+	uart = new SimpleUart(0);
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
 	while (1)
 	{
-//		blinkG.poll();
-//		blinkR.poll();
+#ifdef PICO_LED_G
+		blinkG.poll();
+#endif
+#ifdef PICO_LED_R
+		blinkR.poll();
+#endif
 		uif();
 		rx();
 	}
