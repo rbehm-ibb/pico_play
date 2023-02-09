@@ -15,10 +15,11 @@
 #include "gpioinit.h"
 #include "cmdline.h"
 #include "simpleuart.h"
+#include "uartline.h"
 
 using namespace std;
 
-const char version[] = "SimpleUart 0.1";
+const char version[] = "UartLine 0.1";
 static const IoDef io[] =
 {
 	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx" },
@@ -49,7 +50,7 @@ static void uif();
 static void rx();
 
 LedBlink *blink = 0;
-SimpleUart *uart = nullptr;
+UartLine *uart = nullptr;
 
 int main()
 {
@@ -71,7 +72,7 @@ int main()
 	blink->setTime(300);
 	Debug::showSysInfo(version);
 
-	uart = new SimpleUart(0);
+	uart = new UartLine(0);
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
 	while (1)
 	{
@@ -120,10 +121,25 @@ static void  uartwrite(const CmdLine::Args &a)
 	for (const char *s : a)
 	{
 //		cout << __PRETTY_FUNCTION__ << " <" << s << ">" << endl;
-		uart->put(s);
+		uart->putLine(s);
 	}
 }
 
+static void  leadin(const CmdLine::Args &a)
+{
+	if (a.size() > 1)
+	{
+		uart->setLeadin(a[1]);
+	}
+}
+
+static void  leadout(const CmdLine::Args &a)
+{
+	if (a.size() > 1)
+	{
+		uart->setLeadout(a[1]);
+	}
+}
 
 static void uif()
 {
@@ -134,6 +150,8 @@ static void uif()
 		{ "led", led },
 		{ "pin", pin },
 		{ "w", uartwrite },
+		{ "lin", leadin },
+		{ "lout", leadout },
 		{ nullptr, nullptr }
 	};
 
@@ -143,14 +161,19 @@ static void uif()
 	return;
 }
 
+static char line[200];
 static void rx()
 {
 	static const uint32_t mask = 1U << 2;
-	while (uart->hasrx())
+	while (uart->hasRx())
 	{
-		gpio_set_mask(mask);
-		char c = uart->get();
-		gpio_clr_mask(mask);
-		cout << '[' << hex << c << dec << "]" << flush;
+		uart->getLine(line);
+		cout << __PRETTY_FUNCTION__ << " <" << line << ">" << endl;
 	}
+//	{
+//		gpio_set_mask(mask);
+//		char c = uart->get();
+//		gpio_clr_mask(mask);
+//		cout << '[' << hex << c << dec << "]" << flush;
+//	}
 }
