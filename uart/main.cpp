@@ -16,6 +16,7 @@
 #include "cmdline.h"
 #include "simpleuart.h"
 #include "uartline.h"
+#include "timer.h"
 
 using namespace std;
 
@@ -51,6 +52,7 @@ static void rx();
 
 LedBlink *blink = 0;
 UartLine *uart = nullptr;
+Timer *timer = nullptr;
 
 int main()
 {
@@ -74,6 +76,8 @@ int main()
 
 	uart = new UartLine(0);
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
+	timer = new Timer;
+	cout <<  "timer #" << timer->id() << endl;
 	while (1)
 	{
 #ifdef PICO_LED_G
@@ -141,6 +145,20 @@ static void  leadout(const CmdLine::Args &a)
 	}
 }
 
+static void  start(const CmdLine::Args &a)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+	timer->start();
+}
+
+static void  stop(const CmdLine::Args &a)
+{
+	cout << __PRETTY_FUNCTION__ << endl;
+	timer->stop();
+}
+
+
+
 static void uif()
 {
 	static const CmdLine::Cmd cmd[] =
@@ -152,6 +170,8 @@ static void uif()
 		{ "w", uartwrite },
 		{ "lin", leadin },
 		{ "lout", leadout },
+		{ "start", &start },
+		{ "stop", &stop },
 		{ nullptr, nullptr }
 	};
 
@@ -164,11 +184,18 @@ static void uif()
 static char line[200];
 static void rx()
 {
+	int lasttick = 0;
 	static const uint32_t mask = 1U << 2;
 	while (uart->hasRx())
 	{
 		uart->getLine(line);
 		cout << __PRETTY_FUNCTION__ << " <" << line << ">" << endl;
+	}
+	int t = timer->tick();
+	if (timer->xxx())
+	{
+		lasttick = t;
+		cout << "timer " << timer->id() << " #" << timer->tick() << endl;
 	}
 //	{
 //		gpio_set_mask(mask);
