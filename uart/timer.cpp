@@ -28,6 +28,8 @@ bool Timer::start()
 
 bool Timer::stop()
 {
+	Timer *self = static_cast<Timer *>(timer.user_data);
+	std::cout << __PRETTY_FUNCTION__ << m_id << " pool:" << timer.pool << " Alarm:" << timer.alarm_id << " =" << (self == this) << std::endl;
 	return cancel_repeating_timer(&timer);
 }
 
@@ -40,7 +42,7 @@ bool Timer::hasTick()
 
 bool Timer::timer_callback(repeating_timer_t *rt)
 {
-	static uint32_t mask = 1U << 26;
+	static uint32_t mask = 1U << 2;
 	Timer *self = static_cast<Timer *>(rt->user_data);
 	if (self)
 	{
