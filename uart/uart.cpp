@@ -38,6 +38,7 @@ Uart::Uart(int uartIdx, int txPin, int rxPin, int baud)
 	if (uartIdx != 0 && uartIdx != 1)
 	{
 		std::cerr << __PRETTY_FUNCTION__ << " bad Uart#" << uartIdx << std::endl;
+		hard_assert(uartIdx == 0 || uartIdx == 1);
 	}
 	UartDefine &uartDef = uartDefinition[uartIdx];
 	uartDef.uart = this;
