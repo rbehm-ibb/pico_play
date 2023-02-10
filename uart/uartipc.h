@@ -23,9 +23,6 @@ public:
 	bool put(std::vector<uint8_t> d);
 
 protected:
-	static constexpr int MaxLen = 100;
-	uint8_t m_rxbuffer[MaxLen+1];
-	int m_rxLen;
 	void uartIsr() override;
 private:
 	void clearRx();
@@ -34,7 +31,11 @@ private:
 	uint8_t m_respTx;
 	uint8_t m_rxCrc;
 	bool m_hasRx;
-	void put(uint8_t c) { uart_putc_raw(m_uart, char(c)); }
+
+	static constexpr int MaxLen = 100;
+	std::vector<uint8_t> m_rxbuffer;
+	std::vector<uint8_t> m_txbuffer;
+//	void put(uint8_t c) { uart_putc_raw(m_uart, char(c)); }
 	void (UartIpc::*m_rxState)(uint8_t rxd);
 	// state fcts
 	absolute_time_t m_txTime;

@@ -44,7 +44,7 @@ void UartIpc::poll()
 				break;
 			}
 		}
-		std::cout << __PRETTY_FUNCTION__ << " state:" << name << " rxlen:" << m_rxLen << " waitAck:" << m_waitAck << std::endl;
+		std::cout << __PRETTY_FUNCTION__ << " state:" << name << " rxlen:" << m_rxbuffer.size() << " waitAck:" << m_waitAck << std::endl;
 	}
 	if (m_waitAck)
 	{
@@ -68,16 +68,28 @@ void UartIpc::poll()
 	}
 }
 
-int UartIpc::get(uint8_t *d)
+//int UartIpc::get(uint8_t *d)
+//{
+//	if (! m_hasRx)
+//	{
+//		return -1;
+//	}
+//	m_rxbuffer.clear();
+//	int rxl = m_rxLen;
+//	m_hasRx = 0;
+//	return rxl;
+//}
+
+std::vector<uint8_t> UartIpc::get()
 {
-	if (! m_hasRx)
+	std::vector<uint8_t> res;
+	if (m_hasRx)
 	{
-		return -1;
+		res = m_rxbuffer;
+		m_hasRx = false;
+		m_respTx = ACK;
 	}
-	memcpy(d, m_rxbuffer, m_rxLen);
-	int rxl = m_rxLen;
-	m_hasRx = 0;
-	return rxl;
+	return res;
 }
 
 bool UartIpc::put(const uint8_t *d, size_t l)
@@ -86,11 +98,26 @@ bool UartIpc::put(const uint8_t *d, size_t l)
 	{
 		return false;
 	}
+	std::vector<uint8_t> v;
+	v.reserve(l);
+	for (uint i =  0; i < l; ++i)
+	{
+		v.push_back(d[i]);
+	}
+	return put(v);
+}
+
+bool UartIpc::put(std::vector<uint8_t> d)
+{
+	if (m_waitAck)
+	{
+		return false;
+	}
+	m_txbuffer = d;
 	uint8_t crc = 0;
 	Uart::put(char(STX));
-	for (uint i = 0; i < l; ++i)
+	for (const uint8_t c : d)
 	{
-		const uint8_t c = d[i];
 		if (c == DLE)
 		{
 			Uart::put(c);
@@ -105,11 +132,6 @@ bool UartIpc::put(const uint8_t *d, size_t l)
 	m_waitAck = true;
 	m_txTime = make_timeout_time_ms(1000);
 	return true;
-}
-
-bool UartIpc::put(std::vector<uint8_t> d)
-{
-	return put(d.data(), d.size());
 }
 
 
