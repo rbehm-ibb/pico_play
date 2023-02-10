@@ -7,6 +7,7 @@
 #ifndef UARTLINE_H
 #define UARTLINE_H
 
+#include <string>
 #include "uart.h"
 
 ///
@@ -40,6 +41,8 @@ public:
 	UartLine(int uartIdx, int txPin =  -1, int rxPin = -1, int baud = 115200);
 	bool hasRx() const { return m_hasLine; }
 	bool getLine(char *s);		/// s must be big enough
+	std::string get();
+	void put(const std::string &s);
 	void putLine(const char *s);	/// send a line with leaadin/out pre/appended
 	const char *leadin() { return m_inMatch.match(); }
 	void setLeadin(const char *s) { m_inMatch.setMatch(s); }
