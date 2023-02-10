@@ -46,6 +46,8 @@ protected:
 	virtual void uartIsr() = 0;
 	static void uart0Isr();
 	static void uart1Isr();
+	void put(char c) { uart_putc_raw(m_uart, c); }
+	void put(uint8_t c) { put(char(c)); }
 };
 
 #endif // UART_H
