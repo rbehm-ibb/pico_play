@@ -21,7 +21,7 @@
 
 using namespace std;
 
-const char version[] = "UartLine 0.1";
+const char version[] = "UartIpc 0.1";
 static const IoDef io[] =
 {
 	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx" },
@@ -52,7 +52,7 @@ static void uif();
 static void rx();
 
 LedBlink *blink = 0;
-UartLine *uart = nullptr;
+UartIpc *uart = nullptr;
 Timer *timer[3] = {  nullptr };
 
 int main()
@@ -75,7 +75,8 @@ int main()
 	blink->setTime(300);
 	Debug::showSysInfo(version);
 
-	uart = new UartLine(0);
+	uart = new UartIpc(0);
+//	uart->setLeadout(">");
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
 	for (int i = 0; i < count_of(timer); ++i)
 	{
@@ -130,10 +131,10 @@ static void  pin(const CmdLine::Args &a)
 
 static void  uartwrite(const CmdLine::Args &a)
 {
-	for (const char *s : a)
+	for (int i = 1; i < a.size(); ++i)
 	{
-//		cout << __PRETTY_FUNCTION__ << " <" << s << ">" << endl;
-		uart->putLine(s);
+		cout << __PRETTY_FUNCTION__ << " <" << a.argn(i) << ">" << endl;
+		uart->put(a.asVecu8(i));
 	}
 }
 
@@ -141,7 +142,7 @@ static void  leadin(const CmdLine::Args &a)
 {
 	if (a.size() > 1)
 	{
-		uart->setLeadin(a[1]);
+//		uart->setLeadin(a[1]);
 	}
 }
 
@@ -149,7 +150,7 @@ static void  leadout(const CmdLine::Args &a)
 {
 	if (a.size() > 1)
 	{
-		uart->setLeadout(a[1]);
+//		uart->setLeadout(a[1]);
 	}
 }
 
@@ -157,14 +158,28 @@ static void  start(const CmdLine::Args &a)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
 	int i = a.num(1);
-	timer[i]->start();
+	if (i >= 0 && i < count_of(timer))
+	{
+		timer[i]->start();
+	}
 }
 
 static void  stop(const CmdLine::Args &a)
 {
-	cout << __PRETTY_FUNCTION__ << endl;
+	cout << __PRETTY_FUNCTION__ << a << endl;
+	if (a.size() == 1)
+	{
+		for (int  i = 0; i < count_of(timer); ++i)
+		{
+			timer[i]->stop();
+		}
+		return;
+	}
 	int i = a.num(1);
+	if (i >= 0 && i < count_of(timer))
+	{
 	timer[i]->stop();
+	}
 }
 
 
@@ -191,15 +206,19 @@ static void uif()
 	return;
 }
 
-static char line[200];
+static uint8_t rxd[200];
 static void rx()
 {
 	static int lasttick[count_of(timer)] = { 0 };
 	static const uint32_t mask = 1U << 2;
+	uart->poll();
 	while (uart->hasRx())
 	{
-		uart->getLine(line);
-		cout << __PRETTY_FUNCTION__ << " <" << line << ">" << endl;
+		int l =  uart->get(rxd);
+		if (l > 0)
+			rxd[l] = 0;
+//		uart->getLine(line);
+		cout << __PRETTY_FUNCTION__ << " rx:" << l << " <" << rxd << ">" << endl;
 	}
 	for (int i = 0; i < count_of(timer); ++i)
 	{
