@@ -30,6 +30,24 @@ bool UartLine::getLine(char *s)
 	return false;
 }
 
+string UartLine::get()
+{
+	if (m_hasLine)
+	{
+		std::string res(m_line, m_lineLen);
+		clearLine();
+		return res;
+	}
+	return std::string();
+}
+
+void UartLine::put(const string &s)
+{
+	put(leadin());
+	uart_write_blocking(m_uart, (const uint8_t *)s.data(), s.size());
+	put(leadout());
+}
+
 void UartLine::putLine(const char *s)
 {
 	put(leadin());
@@ -41,7 +59,7 @@ void UartLine::put(const char *s)
 {
 	while (*s)
 	{
-		uart_putc_raw(m_uart, *s++);
+		Uart::put(*(s++));
 	}
 }
 
