@@ -27,6 +27,7 @@ public:
 		Args() {}
 		const char * argn(uint n) const;
 		int num(int n, uint base = 0) const;
+		std::vector<uint8_t> asVecu8(int n) const;
 	};
 
 	typedef void (*callback_t)(const Args &);

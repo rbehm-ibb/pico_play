@@ -106,3 +106,19 @@ int CmdLine::Args::num(int n, uint base) const
 {
 	return strtol(argn(n), nullptr, base);
 }
+
+std::vector<uint8_t> CmdLine::Args::asVecu8(int n) const
+{
+	vector<uint8_t> res;
+	if (n < size())
+	{
+		const char *s = at(n);
+		const int l = strlen(s);
+		res.reserve(l);
+		for (int i = 0; i < l; ++i)
+		{
+			res.push_back(s[i]);
+		}
+	}
+	return res;
+}
