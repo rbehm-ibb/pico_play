@@ -7,7 +7,8 @@
 #ifndef SIMPLEUART_H
 #define SIMPLEUART_H
 
-#include "uart.h"
+#include "pico/util/queue.h"
+#include "uartbase.h"
 
 ///
 /// \brief The SimpleUart class is a simple char based Uart
@@ -17,10 +18,11 @@
 ///
 /// Setup of the hardware is done by the base class.
 ///
-class SimpleUart : public Uart
+class SimpleUart : public UartBase
 {
 public:
 	SimpleUart(int uartIdx, int txPin =  -1, int rxPin = -1, int baud = 115200);
+	virtual ~SimpleUart();
 	bool hasrx();
 	uint8_t get();
 	bool canTx();

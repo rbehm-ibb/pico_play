@@ -6,7 +6,9 @@
 
 #include <iostream>
 #include <string.h>
+#include "pico/time.h"
 #include "uartipc.h"
+#include "hardware/gpio.h"
 
 struct States
 {
@@ -22,11 +24,17 @@ struct States
 };
 
 UartIpc::UartIpc(int uartIdx, int txPin, int rxPin, int baud)
-	: Uart(uartIdx, txPin, rxPin, baud)
+	: UartBase(uartIdx, txPin, rxPin, baud)
 	, m_waitAck(false)
 	, m_respTx(0)
 {
 	clearRx();
+	gpio_init(2);
+	gpio_set_dir(2, true);
+	gpio_put(2, 1);
+	gpio_init(3);
+	gpio_set_dir(3, true);
+	gpio_put(3, 1);
 }
 
 void UartIpc::poll()
@@ -56,29 +64,17 @@ void UartIpc::poll()
 		if (time_reached(m_txTime))
 		{
 			std::cout << __PRETTY_FUNCTION__ << "timeout ACK" << std::endl;
-			Uart::put(char(ENQ));
+			UartBase::put(char(ENQ));
 			m_txTime = make_timeout_time_ms(5000);
 		}
 	}
 	if (m_respTx)
 	{
 		std::cout << __PRETTY_FUNCTION__ << " RespTx:" << m_respTx << std::endl;
-		Uart::put(m_respTx);
+		UartBase::put(m_respTx);
 		m_respTx = 0;
 	}
 }
-
-//int UartIpc::get(uint8_t *d)
-//{
-//	if (! m_hasRx)
-//	{
-//		return -1;
-//	}
-//	m_rxbuffer.clear();
-//	int rxl = m_rxLen;
-//	m_hasRx = 0;
-//	return rxl;
-//}
 
 std::vector<uint8_t> UartIpc::get()
 {
@@ -115,19 +111,19 @@ bool UartIpc::put(std::vector<uint8_t> d)
 	}
 	m_txbuffer = d;
 	uint8_t crc = 0;
-	Uart::put(char(STX));
+	UartBase::put(char(STX));
 	for (const uint8_t c : d)
 	{
 		if (c == DLE)
 		{
-			Uart::put(c);
+			UartBase::put(c);
 		}
-		Uart::put(c);
+		UartBase::put(c);
 		crc += c;
 	}
-	Uart::put(char(DLE));
-	Uart::put(char(ETX));
-	Uart::put(crc);
+	UartBase::put(char(DLE));
+	UartBase::put(char(ETX));
+	UartBase::put(crc);
 	m_respRxd = 0;
 	m_waitAck = true;
 	m_txTime = make_timeout_time_ms(1000);
@@ -137,6 +133,12 @@ bool UartIpc::put(std::vector<uint8_t> d)
 
 void UartIpc::uartIsr()
 {
+	const uint32_t mask1 = 1U << 2;
+	const uint32_t mask2 = 1U << 3;
+	bool on = uart_get_dreq(m_uart, 1);
+	gpio_put_masked(mask1, on);
+	on = uart_get_dreq(m_uart, 0);
+	gpio_put_masked(mask2, on);
 	while (uart_is_readable(m_uart))
 	{
 		const uint8_t c = uart_getc(m_uart);
@@ -146,8 +148,7 @@ void UartIpc::uartIsr()
 
 void UartIpc::clearRx()
 {
-	memset(m_rxbuffer, 0, sizeof(m_rxbuffer));
-	m_rxLen = 0;
+	m_rxbuffer.clear();
 	m_hasRx = false;
 	m_rxState = &UartIpc::rxIdle;
 }
@@ -167,7 +168,7 @@ void UartIpc::rxIdle(uint8_t c)
 			m_respTx = NAK;
 			break;
 		}
-		m_rxLen = 0;
+		m_rxbuffer.clear();	// start from 0
 		m_rxCrc = 0;
 		m_rxState = &UartIpc::rxData;
 		break;
@@ -201,7 +202,7 @@ void UartIpc::rxCrc(uint8_t c)
 	if (c == m_rxCrc)
 	{
 //		Uart::put(char(ACK));
-		m_respTx = ACK;
+		m_respTx = WACK;
 		m_hasRx = true;
 	}
 	else
@@ -212,13 +213,13 @@ void UartIpc::rxCrc(uint8_t c)
 
 void UartIpc::addRxData(uint8_t c)
 {
-	if (m_rxLen >= MaxLen)
+	if (m_rxbuffer.size() >= MaxLen)
 	{
 //		Uart::put(char(NAK));
 		m_respTx = NAK;
 		m_rxState = &UartIpc::rxIdle;
 		return;
 	}
-	m_rxbuffer[m_rxLen++] = c;
+	m_rxbuffer.push_back(c);
 	m_rxCrc += c;
 }

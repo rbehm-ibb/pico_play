@@ -5,29 +5,32 @@
 // ******************************************************
 
 #include <iostream>
-#include "uart.h"
+#include "pico/stdlib.h"
+#include "uartbase.h"
 
-Uart::UartDefine Uart::uartDefinition[] =
+UartBase::UartDescr UartBase::uartDefinition[] =
 {
-	{  0,  1, UART0_IRQ, nullptr, &Uart::uart0Isr },
-	{ 20, 21, UART1_IRQ, nullptr, &Uart::uart1Isr }
+	{  0,  1, UART0_IRQ, nullptr, &UartBase::uart0Isr },
+	{ 20, 21, UART1_IRQ, nullptr, &UartBase::uart1Isr }
 };
-inline int Uart::getTxPin(int idx, int tx)
+
+inline int UartBase::getTxPin(int idx, int tx)
 {
 	if (tx >= 0)
 		return tx;
 	assert(idx = 0 || idx == 1);
-	return Uart::uartDefinition[idx].txPin;
+	return UartBase::uartDefinition[idx].txPin;
 }
-inline int Uart::getRxPin(int idx, int rx)
+
+inline int UartBase::getRxPin(int idx, int rx)
 {
 	if (rx >= 0)
 		return rx;
 	assert(idx = 0 || idx == 1);
-	return Uart::uartDefinition[idx].rxPin;
+	return UartBase::uartDefinition[idx].rxPin;
 }
 
-Uart::Uart(int uartIdx, int txPin, int rxPin, int baud)
+UartBase::UartBase(int uartIdx, int txPin, int rxPin, int baud)
 	: m_txPin(getTxPin(uartIdx, txPin))
 	, m_rxPin(getRxPin(uartIdx, rxPin))
 	, m_baud(baud)
@@ -37,11 +40,11 @@ Uart::Uart(int uartIdx, int txPin, int rxPin, int baud)
 	invalid_params_if(UART, uartIdx != 0 && uartIdx != 1);
 	if (uartIdx != 0 && uartIdx != 1)
 	{
-		std::cerr << __PRETTY_FUNCTION__ << " bad Uart#" << uartIdx << std::endl;
-		hard_assert(uartIdx == 0 || uartIdx == 1);
+//		std::cerr << __PRETTY_FUNCTION__ << " bad Uart#" << uartIdx << std::endl;
+		hard_assertion_failure();
 	}
-	UartDefine &uartDef = uartDefinition[uartIdx];
-	uartDef.uart = this;
+	m_descr = &uartDefinition[uartIdx];
+	m_descr->uart = this;
 	uart_init(m_uart, m_baud);
 	gpio_set_function(m_txPin, GPIO_FUNC_UART);
 	gpio_set_function(m_rxPin, GPIO_FUNC_UART);
@@ -52,23 +55,32 @@ Uart::Uart(int uartIdx, int txPin, int rxPin, int baud)
 	{
 		uart_getc(m_uart);
 	}
-	irq_set_exclusive_handler(uartDef.irq, uartDef.rxisr);
-	irq_set_enabled(uartDef.irq, true);
+	irq_set_exclusive_handler(m_descr->irq, m_descr->rxisr);
+	irq_set_enabled(m_descr->irq, true);
 	uart_set_irq_enables(m_uart, true, false);
 }
 
-void Uart::setBaud(int baud)
+UartBase::~UartBase()
+{
+//	std::cout << __PRETTY_FUNCTION__ << " #" << m_uartIdx << std::endl;
+	uart_set_irq_enables(m_uart, false, false);
+	uart_deinit(m_uart);
+	irq_set_enabled(m_descr->irq, false);
+	irq_remove_handler(m_descr->irq, m_descr->rxisr);
+}
+
+void UartBase::setBaud(int baud)
 {
 	m_baud = baud;
 	uart_set_baudrate(m_uart, m_baud);
 }
 
-void Uart::uart0Isr()
+void UartBase::uart0Isr()
 {
 	uartDefinition[0].uart->uartIsr();
 }
 
-void Uart::uart1Isr()
+void UartBase::uart1Isr()
 {
 	uartDefinition[1].uart->uartIsr();
 }

@@ -4,10 +4,10 @@
 // * created 10/31/2022 by behm
 // ******************************************************
 
-#include <iostream>
+#include <ostream>
 #include <stdlib.h>
 #include <stdio.h>
-#include "pico/stdlib.h"
+//#include "pico/stdlib.h"
 //#include "pico/util/queue.h"
 //#include "hardware/irq.h"
 #include "debug.h"
@@ -24,8 +24,8 @@ using namespace std;
 const char version[] = "UartIpc 0.1";
 static const IoDef io[] =
 {
-	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx" },
-	{ 1, IoDef::In, 0, IoDef::PUp, "Rx" },
+	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx0" },
+	{ 1, IoDef::In, 0, IoDef::PUp, "Rx0" },
 	{ 2, IoDef::Out, 0, IoDef::PUp, "tgl" },
 	{ 3, IoDef::Out, 0, IoDef::PUp, "irq" },
 	{ 4, IoDef::Out, 0, IoDef::PUp, "SDA" },
@@ -39,6 +39,8 @@ static const IoDef io[] =
 	{ 27, IoDef::Out, 0, IoDef::PUp, "A1" },
 	{ 28, IoDef::Out, 0, IoDef::PUp, "A2" },
 	{ 29, IoDef::Out, 0, IoDef::PUp, "A3" },
+	{ 20, IoDef::Out, 0, IoDef::PUp, "Tx1" },
+	{ 21, IoDef::Out, 0, IoDef::PUp, "Rx1" },
 #ifdef PICO_LED_G
 	{ PICO_LED_R, IoDef::Out, 1, IoDef::None, "LedR" },
 	{ PICO_LED_G, IoDef::Out, 1, IoDef::None, "LedG" },
@@ -75,7 +77,12 @@ int main()
 	blink->setTime(300);
 	Debug::showSysInfo(version);
 
-	uart = new UartIpc(0);
+	{
+		UartLine ul(0);
+		ul.setLeadin("1234567890qwert");
+	}
+
+	uart = new UartIpc(1);
 //	uart->setLeadout(">");
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
 	for (int i = 0; i < count_of(timer); ++i)
@@ -83,7 +90,7 @@ int main()
 		timer[i] = new Timer;
 		cout <<  "timer #" << timer[i]->id() << endl;
 	}
-	cout << "Uart:" << sizeof(Uart) << " SimpleUart:" << sizeof(SimpleUart)
+	cout << "Uart:" << sizeof(UartBase) << " SimpleUart:" << sizeof(SimpleUart)
 	     << " UartLine:" << sizeof(UartLine) << " UartIpc:" << sizeof(UartIpc)
 		 << " Timer:" << sizeof(Timer)
 	     << endl;
@@ -206,7 +213,6 @@ static void uif()
 	return;
 }
 
-static uint8_t rxd[200];
 static void rx()
 {
 	static int lasttick[count_of(timer)] = { 0 };
@@ -214,11 +220,8 @@ static void rx()
 	uart->poll();
 	while (uart->hasRx())
 	{
-		int l =  uart->get(rxd);
-		if (l > 0)
-			rxd[l] = 0;
-//		uart->getLine(line);
-		cout << __PRETTY_FUNCTION__ << " rx:" << l << " <" << rxd << ">" << endl;
+		std::vector<uint8_t> rxb =  uart->get();
+		cout << __PRETTY_FUNCTION__ << " rx:" << rxb.size() << " <" << rxb.data() << ">" << endl;
 	}
 	for (int i = 0; i < count_of(timer); ++i)
 	{

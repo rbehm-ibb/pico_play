@@ -8,7 +8,7 @@
 #define UARTLINE_H
 
 #include <string>
-#include "uart.h"
+#include "uartbase.h"
 
 ///
 /// \brief The Matcher class hsa a match string
@@ -35,12 +35,13 @@ private:
 /// It accepts input lines starting with a leadin sequence and ending with an leaout sequence. Anything else gets ignored.
 /// Sent lines are pre/appended with these sequences automatically.
 ///
-class UartLine : public Uart
+class UartLine : public UartBase
 {
 public:
 	UartLine(int uartIdx, int txPin =  -1, int rxPin = -1, int baud = 115200);
+	virtual ~UartLine();
 	bool hasRx() const { return m_hasLine; }
-	bool getLine(char *s);		/// s must be big enough
+	bool getLine(char *s, size_t max);		/// s must be big enough
 	std::string get();
 	void put(const std::string &s);
 	void putLine(const char *s);	/// send a line with leaadin/out pre/appended

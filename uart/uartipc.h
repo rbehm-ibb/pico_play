@@ -8,16 +8,15 @@
 #define UARTIPC_H
 
 #include <vector>
-#include "uart.h"
+#include "uartbase.h"
 
-class UartIpc : public Uart
+class UartIpc : public UartBase
 {
 public:
-	enum Ctrl { STX='s', ETX='e', DLE='d', ACK='a', NAK='n', ENQ='?', WACK='w' };
+	enum Ctrl { STX='s', ETX='e', DLE='d', ACK='A', NAK='N', ENQ='Q', WACK='W' };
 	UartIpc(int uartIdx, int txPin =  -1, int rxPin = -1, int baud = 115200);
 	void poll();
 	bool hasRx() const { return m_hasRx; }
-	int get(uint8_t *d);
 	std::vector<uint8_t> get();
 	bool put(const  uint8_t *d, size_t l);
 	bool put(std::vector<uint8_t> d);
@@ -35,7 +34,6 @@ private:
 	static constexpr int MaxLen = 100;
 	std::vector<uint8_t> m_rxbuffer;
 	std::vector<uint8_t> m_txbuffer;
-//	void put(uint8_t c) { uart_putc_raw(m_uart, char(c)); }
 	void (UartIpc::*m_rxState)(uint8_t rxd);
 	// state fcts
 	absolute_time_t m_txTime;

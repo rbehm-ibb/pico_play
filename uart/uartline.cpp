@@ -11,7 +11,7 @@
 using namespace std;
 
 UartLine::UartLine(int uartIdx, int txPin, int rxPin, int baud)
-	: Uart(uartIdx, txPin, rxPin, baud)
+	: UartBase(uartIdx, txPin, rxPin, baud)
 {
 	setLeadin("$");
 	setLeadout("\n");
@@ -19,11 +19,16 @@ UartLine::UartLine(int uartIdx, int txPin, int rxPin, int baud)
 	clearLine();
 }
 
-bool UartLine::getLine(char *s)
+UartLine::~UartLine()
+{
+
+}
+
+bool UartLine::getLine(char *s, size_t max)
 {
 	if (m_hasLine)
 	{
-		strcpy(s, m_line);
+		strlcpy(s, m_line, max);
 		clearLine();
 		return true;
 	}
@@ -44,7 +49,7 @@ string UartLine::get()
 void UartLine::put(const string &s)
 {
 	put(leadin());
-	uart_write_blocking(m_uart, (const uint8_t *)s.data(), s.size());
+	put(s);uart_write_blocking(m_uart, (const uint8_t *)s.data(), s.size());
 	put(leadout());
 }
 
@@ -57,10 +62,7 @@ void UartLine::putLine(const char *s)
 
 void UartLine::put(const char *s)
 {
-	while (*s)
-	{
-		Uart::put(*(s++));
-	}
+	uart_write_blocking(m_uart, (const uint8_t *)s, strlen(s));
 }
 
 void UartLine::clearLine()
@@ -134,8 +136,5 @@ bool Matcher::tryMatch(char c)
 
 void Matcher::setMatch(const char *s)
 {
-	memset(m_match, 0, sizeof(m_match));
-	strncpy(m_match, s, maxSeq);
+	strlcpy(m_match, s, sizeof(m_match));
 }
-
-

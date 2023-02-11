@@ -9,9 +9,13 @@
 //#define USE_TXISR
 
 SimpleUart::SimpleUart(int uartIdx, int txPin, int rxPin, int baud)
-	: Uart(uartIdx, txPin, rxPin, baud)
+	: UartBase(uartIdx, txPin, rxPin, baud)
 {
 	queue_init(&m_rxq, sizeof(uint8_t), qsize);
+}
+
+SimpleUart::~SimpleUart()
+{
 }
 
 void SimpleUart::uartIsr()
