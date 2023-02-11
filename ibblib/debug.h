@@ -7,18 +7,16 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-#include "vector"
+#include <vector>
 #include "pico/stdlib.h"
-
-using namespace std;
 
 class Debug
 {
 public:
 //	Debug();
 	static void dump(const void *src, size_t size, const char *title = nullptr);
-	static void dump(const vector<uint8_t> &d, const char *title = nullptr);
-	static void dump(const vector<uint16_t> &d, const char *title = nullptr);	// will dump with swapped bytes
+	static void dump(const std::vector<uint8_t> &d, const char *title = nullptr);
+	static void dump(const std::vector<uint16_t> &d, const char *title = nullptr);	// will dump with swapped bytes
 	static void showSysInfo(const char *version);
 private:
 };

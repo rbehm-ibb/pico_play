@@ -7,7 +7,7 @@
 #ifndef GPIOINIT_H
 #define GPIOINIT_H
 
-#include "hardware/gpio.h"
+#include <stdint.h>
 
 struct IoDef
 {

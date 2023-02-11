@@ -6,7 +6,7 @@
 
 #include <string.h>
 #include <iostream>
-#include "pico/stdlib.h"
+#include "pico/stdio.h"
 #include "cmdline.h"
 
 using namespace std;

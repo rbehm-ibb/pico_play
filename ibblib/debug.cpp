@@ -44,12 +44,12 @@ void Debug::dump(const void *src, size_t size, const char *title)
 	}
 }
 
-void Debug::dump(const vector<uint8_t> &d, const char *title)
+void Debug::dump(const std::vector<uint8_t> &d, const char *title)
 {
 	dump(d.data(), d.size(), title);
 }
 
-void Debug::dump(const vector<uint16_t> &d, const char *title)
+void Debug::dump(const std::vector<uint16_t> &d, const char *title)
 {
 #ifdef SWAP
 	vector<uint16_t> dd(d);

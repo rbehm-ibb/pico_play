@@ -4,7 +4,8 @@
 // * created 1/17/2023 by behm
 // ******************************************************
 
-#include "stdio.h"
+#include <stdio.h>
+#include "hardware/gpio.h"
 #include "gpioinit.h"
 
 GpioInit::GpioInit(const IoDef *def)
@@ -24,13 +25,10 @@ void GpioInit::init()
 			gpio_set_dir(def->pin, def->dir == IoDef::Out);
 			gpio_put(def->pin, def->init);
 			gpio_set_pulls(def->pin, def->pull == IoDef::PUp, def->pull == IoDef::PDn);
-//			if (def->dir != IoDef::Out)
-			{
-				m_mask |=  1U << def->pin;
-			}
+			m_mask |=  1U << def->pin;
 		}
 	}
-	printf("mask=%017b\n", m_mask);
+//	printf("mask=%017b\n", m_mask);
 }
 
 void GpioInit::showGpio() const
