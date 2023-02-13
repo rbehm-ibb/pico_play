@@ -14,6 +14,7 @@
 
 class IbRect
 {
+	friend std::ostream &operator<<(std::ostream &s, const IbRect &r);
 public:
 	IbRect() {}	// internal _ct_ will do it
 	IbRect(const IbRect &r) : m_tl(r.m_tl), m_br(r.m_br) { }
@@ -36,7 +37,8 @@ public:
 	bool isNull() const { return m_tl == m_br; }
 	bool operator==(const IbRect &p) const { return m_tl == p.m_tl && m_br == p.m_br; }
 	bool operator!=(const IbRect &p) const { return !(*this == p); }
-	friend std::ostream &operator<<(std::ostream &s, const IbRect &r);
+	IbRect &operator+=(const coord_t x);	/// extend by x in every direction. Might shrink if x < 0
+	bool contains(const IbPoint &p);
 
 protected:
 	IbPoint m_tl;

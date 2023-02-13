@@ -12,6 +12,7 @@
 
 class IbSize
 {
+	friend std::ostream &operator<<(std::ostream &s, const IbSize &sz);
 public:
 	IbSize() : m_w(0), m_h(0) {}
 	IbSize(const IbSize &s) : m_w(s.m_w), m_h(s.m_h) { }
@@ -25,8 +26,9 @@ public:
 	bool operator!=(const IbSize &p) const { return !(*this == p); }
 	IbSize &operator+=(const IbSize &p) { m_w += p.m_w; m_h += p.m_h; return *this; }
 	IbSize &operator+=(const coord_t delta) { m_w += delta; m_h += delta; return *this; }
+	IbSize &operator*=(const int fact) { m_w *= fact; m_h *= fact; return *this; }
+	IbSize &operator*=(const float fact) { m_w *= fact; m_h *= fact; return *this; }
 	friend inline IbSize operator+(const IbSize &p1, const IbSize &p2);
-	friend std::ostream &operator<<(std::ostream &s, const IbSize &sz);
 
 protected:
 	coord_t m_w;

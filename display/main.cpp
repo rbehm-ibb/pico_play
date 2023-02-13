@@ -54,7 +54,7 @@ int main()
 	ibSpi1 = new SpiHw(SpiHw::hwSpi0); // PICO_DEFAULT_SPI_CSN_PIN, 5, 6);
 	ibSpi1->start();
 
-	int n = 0;
+//	int n = 0;
 	while (1)
 	{
 		blink.poll();
@@ -95,6 +95,18 @@ static void uif()
 		r.setSize(IbSize(5, 5));
 		sz += 7;
 		cout << r << "#" << sizeof(r) << " " << p << '#' << sizeof(p) << ' ' << sz << '#' << sizeof(sz) << endl;
+		cout << r << endl;
+		r += 2;
+		cout << "+2 " << r << endl;
+		r += -4;
+		cout << "-4 " << r << endl;
+		cout << sz;
+		sz *= 2;
+		cout << "*2 " << sz << endl;
+		sz *= 1.1f;
+		cout << "*1.1 " << sz << endl;
+		sz += -1;
+		cout << "-1 " << sz << endl;
 	}
 	case 'w':
 		ibSpi1->csOn();

@@ -8,10 +8,8 @@
 
 SpiBase::SpiBase()
 {
-
 }
 
 SpiBase::~SpiBase()
 {
-
 }
