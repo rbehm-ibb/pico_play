@@ -9,8 +9,7 @@
 #include "ledblink.h"
 
 LedBlink::LedBlink(uint pin, uint ms)
-	: /*m_pin(pin)
-	, */m_pinMask(1U << pin)
+	: m_pinMask(1U << pin)
 	, m_ms(ms)
 {
 	gpio_init(pin);
@@ -32,5 +31,5 @@ void LedBlink::poll()
 void LedBlink::setTime(absolute_time_t t)
 {
 	m_ms = t;
-	m_time = delayed_by_ms(get_absolute_time(), m_ms);
+	m_time = make_timeout_time_ms(m_ms);
 }
