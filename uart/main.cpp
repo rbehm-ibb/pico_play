@@ -77,12 +77,12 @@ int main()
 	blink->setTime(300);
 	Debug::showSysInfo(version);
 
-	{
-		UartLine ul(0);
-		ul.setLeadin("1234567890qwert");
-	}
+//	{
+//		UartLine ul(0);
+//		ul.setLeadin("1234567890qwert");
+//	}
 
-	uart = new UartIpc(1);
+	uart = new UartIpc(0);
 //	uart->setLeadout(">");
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
 	for (int i = 0; i < count_of(timer); ++i)

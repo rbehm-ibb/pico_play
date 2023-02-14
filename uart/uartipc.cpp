@@ -29,12 +29,6 @@ UartIpc::UartIpc(int uartIdx, int txPin, int rxPin, int baud)
 	, m_respTx(0)
 {
 	clearRx();
-	gpio_init(2);
-	gpio_set_dir(2, true);
-	gpio_put(2, 1);
-	gpio_init(3);
-	gpio_set_dir(3, true);
-	gpio_put(3, 1);
 }
 
 void UartIpc::poll()
@@ -70,7 +64,7 @@ void UartIpc::poll()
 	}
 	if (m_respTx)
 	{
-		std::cout << __PRETTY_FUNCTION__ << " RespTx:" << m_respTx << std::endl;
+		std::cout << __PRETTY_FUNCTION__ << " RespTx:" << m_respTx << std::hex << int(m_rxCrc) << '.' << int(m_hadCrc) << std::dec << std::endl;
 		UartBase::put(m_respTx);
 		m_respTx = 0;
 	}
@@ -110,7 +104,7 @@ bool UartIpc::put(std::vector<uint8_t> d)
 		return false;
 	}
 	m_txbuffer = d;
-	uint8_t crc = 0;
+	uint8_t crc = STX;
 	UartBase::put(char(STX));
 	for (const uint8_t c : d)
 	{
@@ -123,6 +117,7 @@ bool UartIpc::put(std::vector<uint8_t> d)
 	}
 	UartBase::put(char(DLE));
 	UartBase::put(char(ETX));
+	crc += ETX;
 	UartBase::put(crc);
 	m_respRxd = 0;
 	m_waitAck = true;
@@ -169,7 +164,7 @@ void UartIpc::rxIdle(uint8_t c)
 			break;
 		}
 		m_rxbuffer.clear();	// start from 0
-		m_rxCrc = 0;
+		m_rxCrc = STX;
 		m_rxState = &UartIpc::rxData;
 		break;
 	}
@@ -190,6 +185,7 @@ void UartIpc::rxDle(uint8_t c)
 	if (c == ETX)
 	{
 		m_rxState = &UartIpc::rxCrc;
+		m_rxCrc += c;
 		return;
 	}
 	m_rxState = &UartIpc::rxData;
@@ -198,7 +194,8 @@ void UartIpc::rxDle(uint8_t c)
 
 void UartIpc::rxCrc(uint8_t c)
 {
-	m_rxCrc = '#';
+//	m_rxCrc = '#';
+	m_hadCrc = c;
 	if (c == m_rxCrc)
 	{
 //		Uart::put(char(ACK));

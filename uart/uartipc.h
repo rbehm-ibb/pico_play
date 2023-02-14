@@ -13,7 +13,7 @@
 class UartIpc : public UartBase
 {
 public:
-	enum Ctrl { STX='s', ETX='e', DLE='d', ACK='A', NAK='N', ENQ='Q', WACK='W' };
+	enum Ctrl { STX='S', ETX='E', DLE='D', ACK='A', NAK='N', ENQ='Q', WACK='W' };
 	UartIpc(int uartIdx, int txPin =  -1, int rxPin = -1, int baud = 115200);
 	void poll();
 	bool hasRx() const { return m_hasRx; }
@@ -29,6 +29,7 @@ private:
 	uint8_t m_respRxd;
 	uint8_t m_respTx;
 	uint8_t m_rxCrc;
+	uint8_t m_hadCrc;
 	bool m_hasRx;
 
 	static constexpr int MaxLen = 100;
