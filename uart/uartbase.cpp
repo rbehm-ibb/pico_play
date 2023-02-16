@@ -49,7 +49,7 @@ UartBase::UartBase(int uartIdx, int txPin, int rxPin, int baud)
 	gpio_set_function(m_txPin, GPIO_FUNC_UART);
 	gpio_set_function(m_rxPin, GPIO_FUNC_UART);
 	uart_set_hw_flow(m_uart, false, false);
-	uart_set_format(m_uart, 8, 2, UART_PARITY_NONE);
+	uart_set_format(m_uart, 8, 1, UART_PARITY_NONE);
 	uart_set_fifo_enabled(m_uart, true);
 	while (uart_is_readable_within_us(m_uart, 100))
 	{

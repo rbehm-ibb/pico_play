@@ -17,7 +17,7 @@
 #include "simpleuart.h"
 #include "uartline.h"
 #include "uartipc.h"
-#include "timer.h"
+//#include "timer.h"
 
 using namespace std;
 
@@ -55,7 +55,7 @@ static void rx();
 
 LedBlink *blink = 0;
 UartIpc *uart = nullptr;
-Timer *timer[3] = {  nullptr };
+//Timer *timer[3] = {  nullptr };
 
 int main()
 {
@@ -77,22 +77,17 @@ int main()
 	blink->setTime(300);
 	Debug::showSysInfo(version);
 
-//	{
-//		UartLine ul(0);
-//		ul.setLeadin("1234567890qwert");
-//	}
-
-	uart = new UartIpc(0);
+	uart = new UartIpc(0, -1, -1);
 //	uart->setLeadout(">");
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
-	for (int i = 0; i < count_of(timer); ++i)
-	{
-		timer[i] = new Timer;
-		cout <<  "timer #" << timer[i]->id() << endl;
-	}
+//	for (int i = 0; i < count_of(timer); ++i)
+//	{
+//		timer[i] = new Timer;
+//		cout <<  "timer #" << timer[i]->id() << endl;
+//	}
 	cout << "Uart:" << sizeof(UartBase) << " SimpleUart:" << sizeof(SimpleUart)
 	     << " UartLine:" << sizeof(UartLine) << " UartIpc:" << sizeof(UartIpc)
-		 << " Timer:" << sizeof(Timer)
+//		 << " Timer:" << sizeof(Timer)
 	     << endl;
 	while (1)
 	{
@@ -161,6 +156,7 @@ static void  leadout(const CmdLine::Args &a)
 	}
 }
 
+#if 0
 static void  start(const CmdLine::Args &a)
 {
 	cout << __PRETTY_FUNCTION__ << endl;
@@ -188,7 +184,7 @@ static void  stop(const CmdLine::Args &a)
 	timer[i]->stop();
 	}
 }
-
+#endif
 
 
 static void uif()
@@ -202,8 +198,8 @@ static void uif()
 		{ "w", uartwrite },
 		{ "lin", leadin },
 		{ "lout", leadout },
-		{ "start", &start },
-		{ "stop", &stop },
+//		{ "start", &start },
+//		{ "stop", &stop },
 		{ nullptr, nullptr }
 	};
 
@@ -215,23 +211,27 @@ static void uif()
 
 static void rx()
 {
-	static int lasttick[count_of(timer)] = { 0 };
+//	static int lasttick[count_of(timer)] = { 0 };
 	static const uint32_t mask = 1U << 2;
 	uart->poll();
 	while (uart->hasRx())
 	{
+		uart->poll();
 		std::vector<uint8_t> rxb =  uart->get();
-		cout << __PRETTY_FUNCTION__ << " rx:" << rxb.size() << " <" << rxb.data() << ">" << endl;
-	}
-	for (int i = 0; i < count_of(timer); ++i)
-	{
-		int t = timer[i]->tick();
-		if (lasttick[i] != t)
+		cout << __PRETTY_FUNCTION__ << " rx:" << rxb.size() << " <" << std::hex;
+		for (const uint8_t c : rxb)
 		{
-			lasttick[i] = t;
-			cout << "timer " << timer[i]->id() << " #" << t << endl;
+			cout << int(c) << ' ';
 		}
-
-
+		cout << ">"  << dec << endl;
 	}
+//	for (int i = 0; i < count_of(timer); ++i)
+//	{
+//		int t = timer[i]->tick();
+//		if (lasttick[i] != t)
+//		{
+//			lasttick[i] = t;
+//			cout << "timer " << timer[i]->id() << " #" << t << endl;
+//		}
+//	}
 }

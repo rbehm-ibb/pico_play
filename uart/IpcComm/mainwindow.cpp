@@ -20,11 +20,13 @@ MainWindow::MainWindow(QWidget *parent)
 	connect(ui->port, &SerialPortSelector::portChanged, this, &MainWindow::portChanged);
 	QString port = Config::stringValue("port");
 	ui->port->init(port);
+	ui->txdata->setText(Config::stringValue("txdata"));
 }
 
 MainWindow::~MainWindow()
 {
 	Config::setValue("port", ui->port->portname());
+	Config::setValue("txdata", ui->txdata->text());
 	delete ui;
 }
 

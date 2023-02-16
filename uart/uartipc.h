@@ -8,6 +8,7 @@
 #define UARTIPC_H
 
 #include <vector>
+#include "pico/util/queue.h"
 #include "uartbase.h"
 
 class UartIpc : public UartBase
@@ -33,6 +34,7 @@ private:
 	bool m_hasRx;
 
 	static constexpr int MaxLen = 100;
+	queue_t m_rxq;
 	std::vector<uint8_t> m_rxbuffer;
 	std::vector<uint8_t> m_txbuffer;
 	void (UartIpc::*m_rxState)(uint8_t rxd);

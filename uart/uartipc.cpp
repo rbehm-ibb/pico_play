@@ -29,11 +29,28 @@ UartIpc::UartIpc(int uartIdx, int txPin, int rxPin, int baud)
 	, m_respTx(0)
 {
 	clearRx();
+	queue_init(&m_rxq, sizeof(uint8_t), MaxLen);
 }
 
 void UartIpc::poll()
 {
 	static void (UartIpc::*rxState)(uint8_t rxd) = nullptr;
+	if (! queue_is_empty(&m_rxq))
+	{
+		uint8_t c;
+		queue_remove_blocking(&m_rxq, &c);
+		const char *name = "??";
+		for (const States *p = states; p->name; ++p)
+		{
+			if (m_rxState == p->state)
+			{
+				name = p->name;
+				break;
+			}
+		}
+		std::cout << __PRETTY_FUNCTION__ << name << std::hex << " rx:" << int(c) << std::dec << std::endl;
+		(this->*m_rxState)(c);
+	}
 	if (m_rxState != rxState)
 	{
 		rxState = m_rxState;
@@ -46,7 +63,7 @@ void UartIpc::poll()
 				break;
 			}
 		}
-		std::cout << __PRETTY_FUNCTION__ << " state:" << name << " rxlen:" << m_rxbuffer.size() << " waitAck:" << m_waitAck << std::endl;
+		std::cout << __PRETTY_FUNCTION__ << " state:" << name << " rxlen:" << m_rxbuffer.size() << " waitAck:" << m_waitAck << " rtx:" << m_respTx << std::endl;
 	}
 	if (m_waitAck)
 	{
@@ -64,7 +81,7 @@ void UartIpc::poll()
 	}
 	if (m_respTx)
 	{
-		std::cout << __PRETTY_FUNCTION__ << " RespTx:" << m_respTx << std::hex << int(m_rxCrc) << '.' << int(m_hadCrc) << std::dec << std::endl;
+		std::cout << __PRETTY_FUNCTION__ << " RespTx:" << m_respTx  << " " << std::hex << int(m_rxCrc) << '.' << int(m_hadCrc) << std::dec << std::endl;
 		UartBase::put(m_respTx);
 		m_respTx = 0;
 	}
@@ -72,6 +89,7 @@ void UartIpc::poll()
 
 std::vector<uint8_t> UartIpc::get()
 {
+	std::cout << __PRETTY_FUNCTION__ << " hasrx=" << m_hasRx << std::endl;
 	std::vector<uint8_t> res;
 	if (m_hasRx)
 	{
@@ -134,11 +152,19 @@ void UartIpc::uartIsr()
 	gpio_put_masked(mask1, on);
 	on = uart_get_dreq(m_uart, 0);
 	gpio_put_masked(mask2, on);
+#if 0
+	while (uart_is_readable(m_uart))
+	{
+		uint8_t ch = uart_getc(m_uart);
+		queue_add_blocking(&m_rxq, &ch);
+	}
+#else
 	while (uart_is_readable(m_uart))
 	{
 		const uint8_t c = uart_getc(m_uart);
 		(this->*m_rxState)(c);
 	}
+#endif
 }
 
 void UartIpc::clearRx()
@@ -160,7 +186,7 @@ void UartIpc::rxIdle(uint8_t c)
 	case STX:
 		if (m_hasRx)
 		{
-			m_respTx = NAK;
+			m_respTx = NAK | 0x80;
 			break;
 		}
 		m_rxbuffer.clear();	// start from 0
@@ -206,6 +232,7 @@ void UartIpc::rxCrc(uint8_t c)
 	{
 		m_respTx = NAK;
 	}
+	m_rxState = &UartIpc::rxIdle;
 }
 
 void UartIpc::addRxData(uint8_t c)
