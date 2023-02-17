@@ -1,0 +1,9 @@
+(fp_lib_table
+  (lib (name Connectors_Hirose)(type KiCad)(uri "$(KISYSMOD)/Connectors_Hirose.pretty")(options "")(descr ""))
+  (lib (name Connectors_JST)(type KiCad)(uri "$(KISYSMOD)/Connectors_JST.pretty")(options "")(descr ""))
+  (lib (name Connectors_Molex)(type KiCad)(uri "$(KISYSMOD)/Connectors_Molex.pretty")(options "")(descr ""))
+  (lib (name Connectors_Multicomp)(type KiCad)(uri "$(KISYSMOD)/Connectors_Multicomp.pretty")(options "")(descr ""))
+  (lib (name IBB)(type KiCad)(uri /home/behm/KiCAD/mylib-mod/IBB.pretty/)(options "")(descr ""))
+  (lib (name BET-smd-std)(type KiCad)(uri /home/behm/KiCAD/mylib-mod/BET-smd-std)(options "")(descr ""))
+  (lib (name lib)(type KiCad)(uri /home/behm/KiCAD/lib.pretty)(options "")(descr ""))
+)
