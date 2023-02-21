@@ -4,7 +4,7 @@
 // * created 1/24/2023 by behm
 // ******************************************************
 
-#include "rect.h"
+#include "ibrect.h"
 
 //namespace IbDisp
 //{

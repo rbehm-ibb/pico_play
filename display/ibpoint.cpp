@@ -4,9 +4,9 @@
 // * created 1/24/2023 by behm
 // ******************************************************
 
-#include "point.h"
+#include "ibpoint.h"
 
-std::ostream &operator<<(std::ostream &s, const /*IbDisp::*/IbPoint &p)
+std::ostream &operator<<(std::ostream &s, const IbPoint &p)
 {
 	return s << "P[" << p.x() << ',' << p.y() << ']';
 }

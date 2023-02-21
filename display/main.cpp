@@ -14,24 +14,26 @@
 #include "debug.h"
 #include "ledblink.h"
 
-#include "point.h"
-#include "rect.h"
+#include "ibpoint.h"
+#include "ibrect.h"
 #include "spihw.h"
 
 using namespace std;
 
 const char version[] = "IbDisp 0.1";
+
+enum DisplayPins { Res=0, Cs=1, Clk=2, Mosi=3, Cd=5, Bl=6 };
 static const IoDef io[] =
 {
-	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx" },
-	{ 1, IoDef::Out, 1, IoDef::None, "/Cs" },
-	{ 2, IoDef::Out, 0, IoDef::None, "Sck" },
-	{ 3, IoDef::Out,  0, IoDef::None, "Mosi" },
-	{ 4, IoDef::In,  0, IoDef::None, "Miso" },
-	{ 5, IoDef::Out, 1, IoDef::None, "D/C" },
-	{ 6, IoDef::Out, 1, IoDef::None, "Res" },
-	{ 25, IoDef::Out, 1, IoDef::None, "Led2" },
-	{ -1, IoDef::In, 0, IoDef::None, nullptr }
+	{ Res, IoDef::Out, 1, IoDef::None, "Res" },
+	{ Cs, IoDef::Out, 1, IoDef::None, "/CS" },
+	{ Clk, IoDef::Out, 1, IoDef::None, "Clk" },
+	{ Mosi, IoDef::Out, 1, IoDef::None, "Mosi" },
+	{ 4, IoDef::In,  1, IoDef::PUp, "Miso" },
+	{ Cd, IoDef::Out, 1, IoDef::None, "C/D" },
+	{ Bl, IoDef::Out, 1, IoDef::None, "BL" },
+	{ PICO_DEFAULT_LED_PIN,IoDef::Out, 1, IoDef::None, "LED"  },
+	{ -1, IoDef::Out, 0, IoDef::None, nullptr }
 };
 
 GpioInit gpio(io);

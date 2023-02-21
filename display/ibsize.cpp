@@ -4,7 +4,7 @@
 // * created 1/24/2023 by behm
 // ******************************************************
 
-#include "size.h"
+#include "ibsize.h"
 
 //namespace IbDisp
 //{

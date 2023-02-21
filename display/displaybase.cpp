@@ -6,7 +6,8 @@
 
 #include "displaybase.h"
 
-DisplayBase::DisplayBase()
+DisplayBase::DisplayBase(SpiBase * const ioChannel, const IbSize &size)
+	: m_ioChannel(ioChannel)
+	, m_size(size)
 {
-
 }

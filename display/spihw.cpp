@@ -16,7 +16,7 @@ const SpiHw::HwDef SpiHw::hwSpi0 =
 	.Miso = PICO_DEFAULT_SPI_RX_PIN,
 	.Cs = PICO_DEFAULT_SPI_CSN_PIN,
 	.Cd = 5,
-	.Res = 6
+	.Res = 0
 };
 const SpiHw::HwDef SpiHw::hwSpi1 =
 {

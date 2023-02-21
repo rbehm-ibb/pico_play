@@ -9,8 +9,8 @@
 
 #include <iostream>
 #include "ibdispdef.h"
-#include "point.h"
-#include "size.h"
+#include "ibpoint.h"
+#include "ibsize.h"
 
 class IbRect
 {
