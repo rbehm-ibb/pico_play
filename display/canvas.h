@@ -7,16 +7,12 @@
 #ifndef CANVAS_H
 #define CANVAS_H
 
+#include <vector>
 #include "ibdispdef.h"
 #include "ibsize.h"
 #include "ibpoint.h"
 #include "ibrect.h"
 #include "drawable.h"
-
-class Palette
-{
-
-};
 
 class Canvas : public Drawable
 {
@@ -31,6 +27,7 @@ public:
 	IbPoint drawChar(const IbPoint p, char c) override;
 protected:
 	uint8_t *m_buffer;
+	std::vector<color_t> m_palette;
 };
 
 class Canvas1 : public Canvas
