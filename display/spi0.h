@@ -23,10 +23,10 @@ public:
 	virtual void cdOn() override;
 	virtual void cdOff() override;
 	virtual void reset() override;
-	virtual void tx_blocking(uint16_t d) override;
+	virtual void tx(uint8_t d) override;
 	virtual void tx(uint16_t d) override;
-	virtual void tx(uint16_t cmd, const uint16_t *d, size_t count) override;
-	void waitSpi() { while (! spi_is_busy(spi1)) {}; }
+	virtual void tx(uint8_t cmd, const uint8_t *d, size_t count) override;
+	void waitSpi() { while (! spi_is_busy(spi0)) {}; }
 
 private:
 	const int m_cs;

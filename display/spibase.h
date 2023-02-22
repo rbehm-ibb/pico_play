@@ -22,9 +22,9 @@ public:
 	virtual void cdOn() = 0;
 	virtual void cdOff() = 0;
 	virtual void reset() = 0;
-	virtual void tx_blocking(uint16_t d) = 0;
+	virtual void tx(uint8_t d) = 0;
 	virtual void tx(uint16_t d) = 0;
-	virtual void tx(uint16_t cmd, const uint16_t *d, size_t count) = 0;
+	virtual void tx(uint8_t cmd, const uint8_t *d, size_t count) = 0;
 };
 
 #endif // SPIBASE_H

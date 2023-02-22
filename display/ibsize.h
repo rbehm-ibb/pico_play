@@ -17,17 +17,21 @@ public:
 	IbSize() : m_w(0), m_h(0) {}
 	IbSize(const IbSize &s) : m_w(s.m_w), m_h(s.m_h) { }
 	IbSize(coord_t w, coord_t h) : m_w(w), m_h(h) {}
+	IbSize &operator=(const IbSize &sz) { m_w = sz.m_w; m_h =  sz.m_h; return *this; }
 	coord_t w() const { return m_w; }
 	coord_t h() const { return m_h; }
 	void setW(coord_t newW) { m_w = newW; }
 	void setH(coord_t newH) { m_h = newH; }
+	IbSize &transpose();
 	bool isNull() { return m_w == 0 && m_h == 0; }
 	bool operator==(const IbSize &p) const { return m_w == p.m_w && m_h == p.m_h; }
 	bool operator!=(const IbSize &p) const { return !(*this == p); }
+	IbSize &operator+=(int delta) { m_w += delta; m_h += delta; return *this; }
 	IbSize &operator+=(const IbSize &p) { m_w += p.m_w; m_h += p.m_h; return *this; }
 	IbSize &operator+=(const coord_t delta) { m_w += delta; m_h += delta; return *this; }
 	IbSize &operator*=(const int fact) { m_w *= fact; m_h *= fact; return *this; }
 	IbSize &operator*=(const float fact) { m_w *= fact; m_h *= fact; return *this; }
+	friend inline IbSize operator+(const IbSize &s1, int delta);
 	friend inline IbSize operator+(const IbSize &p1, const IbSize &p2);
 
 protected:
@@ -35,6 +39,7 @@ protected:
 	coord_t m_h;
 };
 
+inline IbSize operator+(const IbSize &p1, int delta) { return IbSize(p1.m_w + delta, p1.m_h + delta); }
 inline IbSize operator+(const IbSize &p1, const IbSize &p2) { return IbSize(p1.m_w + p2.m_w, p1.m_h + p2.m_h); }
 
 #endif // SIZE_H

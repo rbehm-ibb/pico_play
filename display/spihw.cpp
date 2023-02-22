@@ -80,14 +80,15 @@ void SpiHw::reset()
 {
 }
 
-void SpiHw::tx_blocking(uint16_t d)
+void SpiHw::tx(uint8_t d)
 {
 }
 
 void SpiHw::tx(uint16_t d)
 {
+
 }
 
-void SpiHw::tx(uint16_t cmd, const uint16_t *d, size_t count)
+void SpiHw::tx(uint8_t cmd, const uint8_t *d, size_t count)
 {
 }

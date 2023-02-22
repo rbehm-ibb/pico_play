@@ -22,7 +22,9 @@ public:
 	IbRect(const IbPoint &tl, const IbSize &sz) : m_tl(tl) , m_br(tl.x() + sz.w() - 1, tl.y() + sz.h() - 1) { }
 	IbRect &operator=(const IbRect &r) { m_tl = r.m_tl; m_br = r.m_br; return *this; }
 	IbPoint tl() const { return m_tl; }
+	IbPoint tr() const { return IbPoint(right(), top()); }
 	IbPoint br() const { return m_br; }
+	IbPoint bl() const { return IbPoint(left(), bottom()); }
 	void setTl(const IbPoint &newTl) { m_tl = newTl; }
 	void setBr(const IbPoint &newBr) { m_br = newBr; }
 	void moveBy(const IbPoint &p) { m_tl += p; m_br += p; }

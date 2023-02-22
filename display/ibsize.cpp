@@ -15,3 +15,11 @@ std::ostream &operator<<(std::ostream &s, const IbSize &sz)
 }
 
 //} // namesoace
+
+IbSize &IbSize::transpose()
+{
+	auto w = m_w;
+	m_w = m_h;
+	m_h = w;
+	return *this;
+}

@@ -35,9 +35,9 @@ public:
 	void cdOn() override;
 	void cdOff() override;
 	void reset() override;
-	void tx_blocking(uint16_t d) override;
+	void tx(uint8_t d) override;
 	void tx(uint16_t d) override;
-	void tx(uint16_t cmd, const uint16_t *d, size_t count) override;
+	void tx(uint8_t cmd, const uint8_t *d, size_t count) override;
 	static const HwDef hwSpi0, hwSpi1;
 protected:
 	const HwDef m_hw;

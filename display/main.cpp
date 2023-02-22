@@ -66,7 +66,7 @@ int main()
 
 static void uif()
 {
-	static const uint16_t dv[] = { 0x1111, 0x2222, 0x5555 };
+	static const uint8_t dv[] = { 0x11, 0x22, 0x55 };
 	const int c = getchar_timeout_us(0);
 	if (c < 0)
 		return;
@@ -112,11 +112,11 @@ static void uif()
 	}
 	case 'w':
 		ibSpi1->csOn();
-		ibSpi1->tx(0x5555);
+		ibSpi1->tx((uint16_t)0x5555);
 		ibSpi1->csOff();
 		break;
 	case 'W':
-		ibSpi1->tx(0x1234, dv, count_of(dv));
+		ibSpi1->tx(0x12, dv, count_of(dv));
 		break;
 	break;
 	}

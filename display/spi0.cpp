@@ -79,9 +79,9 @@ void Spi0::reset()
 	gpio_put(m_res, 1);
 }
 
-void Spi0::tx_blocking(uint16_t d)
+void Spi0::tx(uint8_t d)
 {
-	spi_write16_blocking(spidev, &d, 1);
+	spi_write_blocking(spidev, &d, 1);
 }
 
 void Spi0::tx(uint16_t d)
@@ -90,13 +90,12 @@ void Spi0::tx(uint16_t d)
 	spi_write_blocking(spidev, dd, 2);
 }
 
-void Spi0::tx(uint16_t cmd, const uint16_t *d, size_t count)
+void Spi0::tx(uint8_t cmd, const uint8_t *d, size_t count)
 {
 	cdOn();
 	csOn();
 	tx(cmd);
 	cdOff();
-	uint8_t *dd = (uint8_t*)(d);
-	spi_write16_blocking(spidev, d, 2*count);
+	spi_write_blocking(spidev, d, count);
 	csOff();
 }

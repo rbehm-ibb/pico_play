@@ -7,25 +7,30 @@
 #ifndef DISPLAYBASE_H
 #define DISPLAYBASE_H
 
+#include "ibdispdef.h"
 #include "spibase.h"
 #include "ibsize.h"
 #include "ibpoint.h"
 #include "ibrect.h"
+#include "drawable.h"
 
-class DisplayBase
+class DisplayBase : public Drawable
 {
 public:
+	enum Rotation { Rot0, Rot90, Rot180, Rot270 };
 	DisplayBase(SpiBase * const ioChannel, const IbSize &size);
-	virtual void init() = 0;
 	IbSize size() const { return m_size; }
-
-	IbRect rect() const { return m_rect; }
 	IbRect dispRect() const { return IbRect(IbPoint(0, 0), m_size); }
+	IbRect rect() const { return m_rect; }
 	virtual void setRect(const IbRect &newRect) = 0;
+
+	Rotation rot() const { return m_rot; }
+	void setRot(Rotation newRot);
 
 protected:
 	SpiBase * const m_ioChannel;	/// the hw channel to talk to the display
-	const IbSize m_size;	/// the size of the display
+	Rotation m_rot;		/// the current display rotation
+	IbSize m_size;		/// the size of the display, will change with rot
 	IbRect m_rect;		/// the current drawing rect
 };
 
