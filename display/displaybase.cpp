@@ -10,7 +10,7 @@ DisplayBase::DisplayBase(SpiBase *const ioChannel, const IbSize &size)
 	: Drawable(size)
 	, m_ioChannel(ioChannel)
 	, m_rot(Rot0)
-	, m_size(size)
+//	, m_size(size)
 {
 }
 

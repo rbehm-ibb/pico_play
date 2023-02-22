@@ -19,6 +19,7 @@ class DisplayBase : public Drawable
 public:
 	enum Rotation { Rot0, Rot90, Rot180, Rot270 };
 	DisplayBase(SpiBase * const ioChannel, const IbSize &size);
+	virtual void init() =  0;
 	IbSize size() const { return m_size; }
 	IbRect dispRect() const { return IbRect(IbPoint(0, 0), m_size); }
 	IbRect rect() const { return m_rect; }
@@ -30,7 +31,7 @@ public:
 protected:
 	SpiBase * const m_ioChannel;	/// the hw channel to talk to the display
 	Rotation m_rot;		/// the current display rotation
-	IbSize m_size;		/// the size of the display, will change with rot
+//	IbSize m_size;		/// the size of the display, will change with rot
 	IbRect m_rect;		/// the current drawing rect
 };
 

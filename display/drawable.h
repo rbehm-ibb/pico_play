@@ -24,7 +24,8 @@ class Drawable
 {
 public:
 	Drawable(const IbSize &size);
-	virtual void init(const IbSize &size) =  0;
+	virtual ~Drawable();
+//	virtual void init(const IbSize &size) =  0;
 	IbSize size() const { return m_size; }
 	void setSize(const IbSize &newSize) { m_size = newSize; }
 
@@ -38,8 +39,8 @@ public:
 	virtual void drawPoint(const IbPoint p) = 0;
 	virtual void drawRect(const IbRect &r);
 	virtual void fillRect(const IbRect &r) = 0;
-	virtual void drawHLine(const IbPoint p, coord_t w);
-	virtual void drawVLine(const IbPoint p, coord_t h);
+	virtual void drawHLine(const IbPoint p, coord_t w) = 0;
+	virtual void drawVLine(const IbPoint p, coord_t h) = 0;
 	virtual IbPoint drawChar(const IbPoint p, char c) = 0;
 
 protected:

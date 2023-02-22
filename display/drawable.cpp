@@ -14,6 +14,10 @@ Drawable::Drawable(const IbSize &size)
 {
 }
 
+Drawable::~Drawable()
+{
+}
+
 void Drawable::drawRect(const IbRect &r)
 {
 	const int w = r.w();
