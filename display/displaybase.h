@@ -22,16 +22,16 @@ public:
 	virtual void init() =  0;
 	IbSize size() const { return m_size; }
 	IbRect dispRect() const { return IbRect(IbPoint(0, 0), m_size); }
-	IbRect rect() const { return m_rect; }
-	virtual void setRect(const IbRect &newRect) = 0;
 
 	Rotation rot() const { return m_rot; }
 	void setRot(Rotation newRot);
 
 protected:
+	void sendInitSeq(const uint8_t *list);
+	IbRect rect() const { return m_rect; }
+	virtual void setRect(const IbRect &newRect) = 0;
 	SpiBase * const m_ioChannel;	/// the hw channel to talk to the display
 	Rotation m_rot;		/// the current display rotation
-//	IbSize m_size;		/// the size of the display, will change with rot
 	IbRect m_rect;		/// the current drawing rect
 };
 

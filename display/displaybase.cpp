@@ -4,13 +4,14 @@
 // * created 1/24/2023 by behm
 // ******************************************************
 
+#include <iostream>
 #include "displaybase.h"
+#include "pico/sync.h"
 
 DisplayBase::DisplayBase(SpiBase *const ioChannel, const IbSize &size)
 	: Drawable(size)
 	, m_ioChannel(ioChannel)
 	, m_rot(Rot0)
-//	, m_size(size)
 {
 }
 
@@ -27,6 +28,27 @@ void DisplayBase::setRot(Rotation newRot)
 		}
 	}
 	m_rot = newRot;
+}
+
+void DisplayBase::sendInitSeq(const uint8_t *list)
+{
+	while (*list != 0xff)
+	{
+		uint8_t cmd = *list++;
+		uint8_t count = *list++;
+		if (count & 0x80)
+		{
+			m_ioChannel->tx(cmd);
+			std::cout << __PRETTY_FUNCTION__ << std::hex << int(cmd) << std::dec << " del " << int(*list) << std::dec << std::endl;
+			busy_wait_ms(*list++);
+
+		}
+		else
+		{
+			m_ioChannel->tx(cmd, list, count);
+			list += count;
+		}
+	}
 }
 
 
