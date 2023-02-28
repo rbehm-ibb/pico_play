@@ -10,7 +10,7 @@
 #include <cstddef>
 #include <stdint.h>
 
-/// SpiBase a base class for alll usable SPI interfaces (HW, PIO, etc)
+/// SpiBase a base class for all usable SPI interfaces (HW, PIO, etc)
 class SpiBase
 {
 public:
