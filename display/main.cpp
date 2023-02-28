@@ -17,6 +17,8 @@
 #include "ibpoint.h"
 #include "ibrect.h"
 #include "spihw.h"
+#include "dummyspi.h"
+#include "dispst7789.h"
 
 using namespace std;
 
@@ -39,7 +41,9 @@ static const IoDef io[] =
 GpioInit gpio(io);
 
 static void uif();
-SpiHw *ibSpi1 = 0;
+//SpiHw *ibSpi1 = 0;
+DummySpi *spi;
+DispSt7789 *disp;
 
 int main()
 {
@@ -53,9 +57,11 @@ int main()
 	blink.setTime(300);
 	Debug::showSysInfo(version);
 	gpio.showGpio();
-	ibSpi1 = new SpiHw(SpiHw::hwSpi0); // PICO_DEFAULT_SPI_CSN_PIN, 5, 6);
-	ibSpi1->start();
+//	ibSpi1 = new SpiHw(SpiHw::hwSpi0); // PICO_DEFAULT_SPI_CSN_PIN, 5, 6);
+//	ibSpi1->start();
 
+	spi = new DummySpi;
+	disp = new DispSt7789(spi, IbSize(320, 240));
 //	int n = 0;
 	while (1)
 	{
@@ -66,7 +72,7 @@ int main()
 
 static void uif()
 {
-	static const uint8_t dv[] = { 0x11, 0x22, 0x55 };
+//	static const uint8_t dv[] = { 0x11, 0x22, 0x55 };
 	const int c = getchar_timeout_us(0);
 	if (c < 0)
 		return;
@@ -110,14 +116,17 @@ static void uif()
 		sz += -1;
 		cout << "-1 " << sz << endl;
 	}
-	case 'w':
-		ibSpi1->csOn();
-		ibSpi1->tx((uint16_t)0x5555);
-		ibSpi1->csOff();
 		break;
-	case 'W':
-		ibSpi1->tx(0x12, dv, count_of(dv));
+//	case 'w':
+//		ibSpi1->csOn();
+//		ibSpi1->tx((uint16_t)0x5555);
+//		ibSpi1->csOff();
+//		break;
+//	case 'W':
+//		ibSpi1->tx(0x12, dv, count_of(dv));
+//		break;
+	case 'i':
+		disp->init();
 		break;
-	break;
 	}
 }
