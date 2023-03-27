@@ -15,6 +15,7 @@ public:
 	LedBlink(uint pin, uint ms);
 	void poll();
 	void setTime(absolute_time_t t);
+	void toggle();
 private:
 	const uint32_t m_pinMask;
 	uint m_ms;

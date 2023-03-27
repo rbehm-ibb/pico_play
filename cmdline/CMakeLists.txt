@@ -16,7 +16,7 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 include_directories(../ibblib)
-file(GLOB FILESIBB ../ibblib/*.h ../ibblib/*.cpp)
+file(GLOB FILESIBB ../ibblib/debug* ../ibblib/ledblink* ../ibblib/gpioinit*)
 file(GLOB FILESSRC *.cpp)
 file(GLOB FILESH *.h)
 

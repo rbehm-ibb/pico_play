@@ -33,3 +33,8 @@ void LedBlink::setTime(absolute_time_t t)
 	m_ms = t;
 	m_time = make_timeout_time_ms(m_ms);
 }
+
+void LedBlink::toggle()
+{
+	gpio_xor_mask(m_pinMask);
+}
