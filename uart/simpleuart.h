@@ -7,7 +7,7 @@
 #ifndef SIMPLEUART_H
 #define SIMPLEUART_H
 
-#include "pico/util/queue.h"
+#include "safequeue.h"
 #include "uartbase.h"
 
 ///
@@ -23,7 +23,7 @@ class SimpleUart : public UartBase
 public:
 	SimpleUart(int uartIdx, int txPin =  -1, int rxPin = -1, int baud = 115200);
 	virtual ~SimpleUart();
-	bool hasrx();
+	bool hasrx() { return ! m_rxq.isEmpty(); }
 	uint8_t get();
 	bool canTx();
 	bool put(uint8_t c);
@@ -32,7 +32,7 @@ public:
 	void put(const uint8_t *s, size_t n);
 protected:
 	static constexpr int qsize = 100;
-	queue_t m_rxq;
+	SafeQueue m_rxq;
 	void uartIsr() override;
 };
 

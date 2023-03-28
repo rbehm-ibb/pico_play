@@ -26,10 +26,11 @@ public:
 	bool ok() const { return m_data !=  nullptr; }
 	bool put(uint8_t d);
 	bool get(uint8_t &d);
+	bool isEmpty() const;
 protected:
 	const uint16_t m_size;
-	std::atomic<uint16_t> m_head;
-	std::atomic<uint16_t> m_tail;
+	volatile std::atomic<uint16_t> m_head;
+	volatile std::atomic<uint16_t> m_tail;
 	uint8_t *m_data;
 };
 

@@ -10,8 +10,8 @@
 
 SimpleUart::SimpleUart(int uartIdx, int txPin, int rxPin, int baud)
 	: UartBase(uartIdx, txPin, rxPin, baud)
+	, m_rxq(qsize)
 {
-	queue_init(&m_rxq, sizeof(uint8_t), qsize);
 }
 
 SimpleUart::~SimpleUart()
@@ -23,22 +23,19 @@ void SimpleUart::uartIsr()
 	while (uart_is_readable(m_uart))
 	{
 		uint8_t ch = uart_getc(m_uart);
-		queue_add_blocking(&m_rxq, &ch);
+		m_rxq.put(ch);
 	}
 #ifdef USE_TXISR
 	// need to handle tx interr.
 #endif
 }
 
-bool SimpleUart::hasrx()
-{
-	return ! queue_is_empty(&m_rxq);
-}
+
 
 uint8_t SimpleUart::get()
 {
 	uint8_t c;
-	queue_remove_blocking(&m_rxq, &c);
+	m_rxq.get(c);
 	return c;
 }
 

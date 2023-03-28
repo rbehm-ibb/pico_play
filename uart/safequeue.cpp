@@ -51,3 +51,8 @@ bool SafeQueue::get(uint8_t &d)
 	}
 	return false;
 }
+
+bool SafeQueue::isEmpty() const
+{
+	return (m_tail != m_head);
+}
