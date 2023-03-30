@@ -54,7 +54,7 @@ static void uif();
 static void rx();
 
 LedBlink *blink = 0;
-UartIpc *uart = nullptr;
+SimpleUart *uart = nullptr;
 //Timer *timer[3] = {  nullptr };
 
 int main()
@@ -77,7 +77,7 @@ int main()
 	blink->setTime(300);
 	Debug::showSysInfo(version);
 
-	uart = new UartIpc(0, -1, -1);
+	uart = new SimpleUart(0, -1, -1);
 //	uart->setLeadout(">");
 	cout << "uart" << uart->uartIdx() << " T" << uart->txPin() << " R" << uart->rxPin() << endl;
 //	for (int i = 0; i < count_of(timer); ++i)
@@ -85,10 +85,10 @@ int main()
 //		timer[i] = new Timer;
 //		cout <<  "timer #" << timer[i]->id() << endl;
 //	}
-	cout << "Uart:" << sizeof(UartBase) << " SimpleUart:" << sizeof(SimpleUart)
-	     << " UartLine:" << sizeof(UartLine) << " UartIpc:" << sizeof(UartIpc)
+//	cout << "Uart:" << sizeof(UartBase) << " SimpleUart:" << sizeof(SimpleUart)
+//	     << " UartLine:" << sizeof(UartLine) << " UartIpc:" << sizeof(UartIpc)
 //		 << " Timer:" << sizeof(Timer)
-	     << endl;
+//	     << endl;
 	while (1)
 	{
 #ifdef PICO_LED_G
@@ -98,7 +98,7 @@ int main()
 		blinkR.poll();
 #endif
 		uif();
-		rx();
+//		rx();
 	}
 }
 
@@ -136,7 +136,7 @@ static void  uartwrite(const CmdLine::Args &a)
 	for (int i = 1; i < a.size(); ++i)
 	{
 		cout << __PRETTY_FUNCTION__ << " <" << a.argn(i) << ">" << endl;
-		uart->put(a.asVecu8(i));
+		uart->put(a[i]);
 	}
 }
 
@@ -186,6 +186,16 @@ static void  stop(const CmdLine::Args &a)
 }
 #endif
 
+static void  sq(const CmdLine::Args &/*a*/)
+{
+	cout << "Q:" << uart->rxq() << endl;
+//	while (uart->hasRx())
+//	{
+//		uint8_t rxc = uart->get();
+//		cout << hex << int(rxc) << dec << '-';
+//	}
+}
+
 
 static void uif()
 {
@@ -198,32 +208,43 @@ static void uif()
 		{ "w", uartwrite },
 		{ "lin", leadin },
 		{ "lout", leadout },
+		{ "#", sq },
 //		{ "start", &start },
 //		{ "stop", &stop },
 		{ nullptr, nullptr }
 	};
 
 	static CmdLine cmdline(cmd);
-	blink->poll();
+	rx();
 	cmdline.poll();
 	return;
 }
 
 static void rx()
 {
-//	static int lasttick[count_of(timer)] = { 0 };
-	static const uint32_t mask = 1U << 2;
-	uart->poll();
+	blink->poll();
 	while (uart->hasRx())
 	{
-		uart->poll();
-		std::vector<uint8_t> rxb =  uart->get();
-		cout << __PRETTY_FUNCTION__ << " rx:" << rxb.size() << " <" << std::hex;
-		for (const uint8_t c : rxb)
-		{
-			cout << int(c) << ' ';
-		}
-		cout << ">"  << dec << endl;
+		uint8_t rxc = uart->get();
+		cout << hex << int(rxc) << dec << '-' << flush;
+	}
+}
+#if 0
+//	static int lasttick[count_of(timer)] = { 0 };
+	static const uint32_t mask = 1U << 2;
+//	uart->poll();
+	while (uart->hasRx())
+	{
+		uint8_t rxc = uart->get();
+		cout << int(rxc) << '-';
+//		uart->poll();
+//		std::vector<uint8_t> rxb =  uart->get();
+//		cout << __PRETTY_FUNCTION__ << " rx:" << rxb.size() << " <" << std::hex;
+//		for (const uint8_t c : rxb)
+//		{
+//			cout << int(c) << ' ';
+//		}
+//		cout << ">"  << dec << endl;
 	}
 //	for (int i = 0; i < count_of(timer); ++i)
 //	{
@@ -235,3 +256,4 @@ static void rx()
 //		}
 //	}
 }
+#endif

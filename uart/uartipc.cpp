@@ -10,11 +10,7 @@
 #include "uartipc.h"
 #include "hardware/gpio.h"
 
-struct States
-{
-	const char *name;
-	void (UartIpc::*state)(uint8_t rxd);
-} states[] =
+struct UartIpc::States UartIpc::states[5] =
 {
 	{ "Idle", &UartIpc::rxIdle },
 	{ "rxData", &UartIpc::rxData },
@@ -29,28 +25,13 @@ UartIpc::UartIpc(int uartIdx, int txPin, int rxPin, int baud)
 	, m_respTx(0)
 {
 	clearRx();
-	queue_init(&m_rxq, sizeof(uint8_t), MaxLen);
+	m_rxState = &UartIpc::rxIdle;
+	m_repeat =  0;
 }
 
 void UartIpc::poll()
 {
 	static void (UartIpc::*rxState)(uint8_t rxd) = nullptr;
-	if (! queue_is_empty(&m_rxq))
-	{
-		uint8_t c;
-		queue_remove_blocking(&m_rxq, &c);
-		const char *name = "??";
-		for (const States *p = states; p->name; ++p)
-		{
-			if (m_rxState == p->state)
-			{
-				name = p->name;
-				break;
-			}
-		}
-		std::cout << __PRETTY_FUNCTION__ << name << std::hex << " rx:" << int(c) << std::dec << std::endl;
-		(this->*m_rxState)(c);
-	}
 	if (m_rxState != rxState)
 	{
 		rxState = m_rxState;
@@ -75,8 +56,16 @@ void UartIpc::poll()
 		if (time_reached(m_txTime))
 		{
 			std::cout << __PRETTY_FUNCTION__ << "timeout ACK" << std::endl;
-			UartBase::put(char(ENQ));
-			m_txTime = make_timeout_time_ms(5000);
+			if (++m_repeat > 5)
+			{
+				UartBase::put(char(ENQNAK));
+				m_waitAck = false;
+			}
+			else
+			{
+				UartBase::put(char(ENQ));
+				m_txTime = make_timeout_time_ms(5000);
+			}
 		}
 	}
 	if (m_respTx)
@@ -106,6 +95,7 @@ bool UartIpc::put(const uint8_t *d, size_t l)
 	{
 		return false;
 	}
+	m_repeat = 0;
 	std::vector<uint8_t> v;
 	v.reserve(l);
 	for (uint i =  0; i < l; ++i)
@@ -121,6 +111,7 @@ bool UartIpc::put(std::vector<uint8_t> d)
 	{
 		return false;
 	}
+	m_repeat = 0;
 	m_txbuffer = d;
 	uint8_t crc = STX;
 	UartBase::put(char(STX));
@@ -149,22 +140,11 @@ void UartIpc::uartIsr()
 	const uint32_t mask1 = 1U << 2;
 	const uint32_t mask2 = 1U << 3;
 	bool on = uart_get_dreq(m_uart, 1);
-	gpio_put_masked(mask1, on);
-	on = uart_get_dreq(m_uart, 0);
-	gpio_put_masked(mask2, on);
-#if 0
-	while (uart_is_readable(m_uart))
-	{
-		uint8_t ch = uart_getc(m_uart);
-		queue_add_blocking(&m_rxq, &ch);
-	}
-#else
 	while (uart_is_readable(m_uart))
 	{
 		const uint8_t c = uart_getc(m_uart);
 		(this->*m_rxState)(c);
 	}
-#endif
 }
 
 void UartIpc::clearRx()

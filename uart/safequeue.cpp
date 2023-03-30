@@ -54,5 +54,11 @@ bool SafeQueue::get(uint8_t &d)
 
 bool SafeQueue::isEmpty() const
 {
-	return (m_tail != m_head);
+	return (m_tail == m_head);
 }
+
+std::ostream &operator<<(std::ostream &s, const  SafeQueue &q)
+{
+	return s << q.m_head << ':' << q.m_tail << ' ';
+}
+

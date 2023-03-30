@@ -23,13 +23,15 @@ class SimpleUart : public UartBase
 public:
 	SimpleUart(int uartIdx, int txPin =  -1, int rxPin = -1, int baud = 115200);
 	virtual ~SimpleUart();
-	bool hasrx() { return ! m_rxq.isEmpty(); }
+	bool hasRx() { return ! m_rxq.isEmpty(); }
 	uint8_t get();
 	bool canTx();
 	bool put(uint8_t c);
 	bool put(char c) { return put(uint8_t(c)); }
 	void put(const char *s);
 	void put(const uint8_t *s, size_t n);
+	const SafeQueue &rxq() const;
+
 protected:
 	static constexpr int qsize = 100;
 	SafeQueue m_rxq;

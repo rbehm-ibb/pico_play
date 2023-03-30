@@ -7,6 +7,7 @@
 #ifndef SAFEQUEUE_H
 #define SAFEQUEUE_H
 
+#include <iostream>
 #include <atomic>
 #include <stdint.h>
 
@@ -20,6 +21,7 @@
 ///
 class SafeQueue
 {
+	friend std::ostream &operator<<(std::ostream &s, const  SafeQueue &q);
 public:
 	SafeQueue(uint16_t size);
 	~SafeQueue();

@@ -89,3 +89,8 @@ void SimpleUart::put(const uint8_t *s, size_t n)
 		--n;
 	}
 }
+
+const SafeQueue &SimpleUart::rxq() const
+{
+	return m_rxq;
+}

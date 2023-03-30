@@ -4,13 +4,10 @@
 // * created 2/7/2023 by behm
 // ******************************************************
 
-#include <string.h>
 #include <iostream>
+#include <string.h>
 #include "pico/stdio.h"
 #include "cmdline.h"
-
-using namespace std;
-
 
 CmdLine::CmdLine(const Cmd * const cmds, const char *dlm)
 	: m_cmds(cmds)
@@ -46,7 +43,7 @@ void CmdLine::evalLine()
 			return;
 		}
 	}
-	cout << "?? <" << cmd << ">" << endl;
+	std::cout << "?? <" << cmd << ">" << std::endl;
 }
 
 void CmdLine::poll()
@@ -69,7 +66,7 @@ void CmdLine::poll()
 		break;
 	case '\r':
 	case '\n':
-		cout << endl;
+		std::cout << std::endl;
 		evalLine();
 		clear();
 		return;
@@ -109,7 +106,7 @@ int CmdLine::Args::num(int n, uint base) const
 
 std::vector<uint8_t> CmdLine::Args::asVecu8(int n) const
 {
-	vector<uint8_t> res;
+	std::vector<uint8_t> res;
 	if (n < size())
 	{
 		const char *s = at(n);
