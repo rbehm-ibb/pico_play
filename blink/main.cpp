@@ -32,11 +32,11 @@ void Monitor::proc()
 		vTaskDelay(500);
 		gpio_put(PICO_DEFAULT_LED_PIN, 0);
 		vTaskDelay(100);
-		if (++tick < 10)
+//		if (++tick < 10)
 		{
-			printf("%d\n", tick);
+			printf("%d\n", ++tick);
 		}
-		if (tick == 10)
+		if ((tick % 10) == 0)
 		{
 			vTaskList(s);
 			printf("Name                    State   Prio    Stack   Num\n");
@@ -89,12 +89,15 @@ char *Blink::name(int pin)
 
 int main()
 {
-	stdio_init_all();
-	while (! stdio_usb_connected())
-	{
-	}
+	stdio_uart_init();
+//	while (! stdio_usb_connected())
+//	{
+//	}
 	Debug::showSysInfo("FreeRTOS-test");
 	printf("FreeRTOS %s\n", tskKERNEL_VERSION_NUMBER);
+	struct xHeapStats hs;
+	vPortGetHeapStats(&hs );
+	printf("heap size=%zu, largest=%zu\n", hs.xAvailableHeapSpaceInBytes, hs.xSizeOfLargestFreeBlockInBytes);
 	Monitor moni;
 	Blink blink1(2);
 	Blink blink2(3);

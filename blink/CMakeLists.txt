@@ -26,7 +26,7 @@ target_link_libraries(blink pico_runtime pico_stdio_usb pico_stdlib FreeRTOS-Ker
 
 # create map/bin/hex/uf2 file etc.
 pico_add_extra_outputs(blink)
-pico_enable_stdio_usb(${PROJECT_NAME} 1)
-pico_enable_stdio_uart(${PROJECT_NAME} 0)
+pico_enable_stdio_usb(${PROJECT_NAME} 0)
+pico_enable_stdio_uart(${PROJECT_NAME} 1)
 
 
