@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Initialize the SDK
 pico_sdk_init()
 
-add_executable(blink blink.c FreeRTOSConfig.h)
+add_executable(blink main.cpp FreeRTOSConfig.h xtask.h xtask.cpp ../ibblib/debug.h ../ibblib/debug.cpp)
 
 target_include_directories(blink PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 
@@ -26,7 +26,7 @@ target_link_libraries(blink pico_runtime pico_stdio_usb pico_stdlib FreeRTOS-Ker
 
 # create map/bin/hex/uf2 file etc.
 pico_add_extra_outputs(blink)
-pico_enable_stdio_usb(${PROJECT_NAME} 0)
-pico_enable_stdio_uart(${PROJECT_NAME} 1)
+pico_enable_stdio_usb(${PROJECT_NAME} 1)
+pico_enable_stdio_uart(${PROJECT_NAME} 0)
 
 
