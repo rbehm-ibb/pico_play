@@ -41,7 +41,7 @@ void GpioInit::showGpio() const
 			const char *f = gpioConf(pin);
 			const char *up  = gpio_is_pulled_up(pin) ? "Up" : "- ";
 			const char *dn  = gpio_is_pulled_down(pin) ? "Dn" : "- ";
-			printf("%02d:%-6s -%15s %-3s u=%s, d=%s v=%d\n", pin, def->name, f, (gpio_get_dir(pin) ? "OUT" : "IN"), up, dn, gpio_get(pin));
+			printf("%02d:%-6s -%s %-3s u=%s, d=%s v=%d\n", pin, def->name, f, (gpio_get_dir(pin) ? "OUT" : "IN"), up, dn, gpio_get(pin));
 		}
 	}
 }
@@ -93,7 +93,7 @@ const char *GpioInit::gpioConf(int n)
 	{
 		if (f == p->fct)
 		{
-			sprintf(s, "%02x %s", f, p->name);
+			sprintf(s, "%02x %14s", f, p->name);
 			return s;
 		}
 	}
