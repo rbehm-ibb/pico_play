@@ -37,6 +37,9 @@ const char version[] = "ADC 0.1" __DATE__ "-" __TIME__;
 
 static void uif();
 static void adcPoll();
+static void __no_inline_not_in_flash_func(callback)(uint gpio, uint32_t event_mask);
+static void showx();
+
 static Adc *a0, *a1;
 
 int main()
@@ -72,6 +75,7 @@ int main()
 	// Set the PWM running
 	pwm_set_enabled(slice_num, true);
 	cout << "slice=" << slice_num << endl;
+	gpio_set_irq_enabled_with_callback(4, GPIO_IRQ_EDGE_RISE, true, &callback);
 
 	gpio.showGpio();
 	while (1)
@@ -96,6 +100,9 @@ static void uif()
 	case 'a':
 		adcPoll();
 		break;
+	case ',':
+		showx();
+		break;
 	default:
 		printf("rx=%04x\n", c);
 	}
@@ -106,4 +113,23 @@ static void adcPoll()
 	cout  << "ADC0:" << setw(10) << a0->scaled(a0->poll()) << " ADC1:" << setw(10) <<  a1->scaled(a1->poll()) << flush;
 	cout << " 0:" << a0->min() << " " << a0->max();
 	cout << " 1:" << a1->min() << " " << a1->max() << '\r' << flush;
+}
+
+static volatile int flag = 0;
+static volatile uint pin = 0;
+static volatile uint32_t mask = 0;
+
+static void showx()
+{
+	cout << boolalpha << flag << " pin=" << pin << " mask=" << mask << endl;
+}
+
+static void __no_inline_not_in_flash_func(callback)(uint gpio, uint32_t event_mask)
+{
+	constexpr uint32_t xmask = 1;
+	++flag;
+	pin = gpio;
+	mask = event_mask;
+	gpio_acknowledge_irq(4, mask);
+	gpio_xor_mask(xmask);
 }
