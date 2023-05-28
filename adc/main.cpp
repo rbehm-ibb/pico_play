@@ -62,6 +62,7 @@ int main()
 	a0 = new Adc(0);
 	a1 = new Adc(1);
 	gpio_set_function(4, GPIO_FUNC_PWM);
+	gpio_set_function(5, GPIO_FUNC_PWM);
 	pwm_config pwm = pwm_get_default_config();
 	uint slice_num = pwm_gpio_to_slice_num(4);
 	// Set period of 4 cycles (0 to 3 inclusive)
@@ -71,7 +72,7 @@ int main()
 	// Set channel A output high for one cycle before dropping
 	pwm_set_chan_level(slice_num, PWM_CHAN_A, khz16/2);
 	// Set initial B output high for three cycles before dropping
-	pwm_set_chan_level(slice_num, PWM_CHAN_B, 3);
+	pwm_set_chan_level(slice_num, PWM_CHAN_B, 1000);
 	// Set the PWM running
 	pwm_set_enabled(slice_num, true);
 	cout << "slice=" << slice_num << endl;

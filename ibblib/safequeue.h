@@ -23,8 +23,8 @@ template<class T> class SafeQueue
 {
 //	friend std::ostream &operator<<(std::ostream &s, const  SafeQueue<T> &q);
 public:
-	SafeQueue<T>();
-	~SafeQueue<T>();
+	SafeQueue<T>(size_t size) : m_size(size), m_head(0), m_tail(0) { m_data =  new T[m_size]; }
+	~SafeQueue<T>() { delete m_data; m_data = nullptr; }
 	bool ok() const { return m_data !=  nullptr; }
 	bool put(T d);
 	bool get(T &d);
@@ -36,11 +36,12 @@ protected:
 	T *m_data;
 };
 
-class SafeQueue16 : public SafeQueue<uint16_t>
-{
-public:
-	SafeQueue16();
-	~SafeQueue16();
-};
+
+//class SafeQueue16 : public SafeQueue<uint16_t>
+//{
+//public:
+//	SafeQueue16();
+//	~SafeQueue16();
+//};
 
 #endif // SAFEQUEUE_H
