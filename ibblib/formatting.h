@@ -12,6 +12,7 @@
 namespace Formatting
 {
 const char *bin(uint16_t d, int ndig);
+const char *nbytesX(const uint8_t *d, int n);
 };
 
 #endif // FORMATTING_H

@@ -4,6 +4,7 @@
 // * created 5/27/2023 by behm
 // ******************************************************
 
+#include <stdio.h>
 #include "formatting.h"
 #include <string.h>
 
@@ -18,6 +19,17 @@ const char *bin(uint16_t d, int ndig)
 	for (char *p = s; mask; ++p, mask >>= 1)
 	{
 		*p = (d & mask) ? '1' : '0';
+	}
+	return s;
+}
+
+const char *nbytesX(const uint8_t *d, int n)
+{
+	static char s[100];
+	memset(s, 0, sizeof(s));
+	for (int i = 0; i < n; ++i)
+	{
+		sprintf(s+3*i, "%02x ", d[i]);
 	}
 	return s;
 }
