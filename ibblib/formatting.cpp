@@ -11,27 +11,52 @@
 namespace Formatting
 {
 
+static char tchar[100];
+
+static void clear()
+{
+	memset(tchar, 0, sizeof(tchar));
+}
+
 const char *bin(uint16_t d, int ndig)
 {
-	static char s[20];
-	memset(s, 0, sizeof(s));
+	clear();
 	uint16_t mask = 1U << (ndig - 1);
-	for (char *p = s; mask; ++p, mask >>= 1)
+	for (char *p = tchar; mask; ++p, mask >>= 1)
 	{
 		*p = (d & mask) ? '1' : '0';
 	}
-	return s;
+	return tchar;
 }
 
 const char *nbytesX(const uint8_t *d, int n)
 {
-	static char s[100];
-	memset(s, 0, sizeof(s));
+	clear();
 	for (int i = 0; i < n; ++i)
 	{
-		sprintf(s+3*i, "%02x ", d[i]);
+		sprintf(tchar+3*i, "%02x ", d[i]);
 	}
-	return s;
+	return tchar;
+}
+
+const char *nbytesX(const std::vector<uint8_t> d, int from, int n)
+{
+	clear();
+	if (n < 0)
+	{
+		n = d.size();
+	}
+	if (from + n > d.size())
+	{
+		n = d.size() - from;
+	}
+	static char s[100];
+	for (int i = 0; i < n; ++i)
+	{
+		sprintf(tchar+3*i, "%02x ", d[from+i]);
+	}
+	return tchar;
 }
 
 }
+

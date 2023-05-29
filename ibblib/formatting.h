@@ -7,12 +7,16 @@
 #ifndef FORMATTING_H
 #define FORMATTING_H
 
-#include <iostream>
+#include <stdint.h>
+#include <vector>
+
 
 namespace Formatting
 {
 const char *bin(uint16_t d, int ndig);
 const char *nbytesX(const uint8_t *d, int n);
+const char *nbytesX(const std::vector<uint8_t> d, int from = 0, int n=-1);
+
 };
 
 #endif // FORMATTING_H
