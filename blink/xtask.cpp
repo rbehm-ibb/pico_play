@@ -36,7 +36,7 @@ void Task::proc()
 {
 	for (;;)
 	{
-		printf("Task::proc(<%s> %x)\n", m_name, this);
+		printf("Task::proc(<%s> %x core=%d)\n", m_name, this, get_core_num());
 		vTaskDelay(1000 /  portTICK_PERIOD_MS);
 	}
 }
@@ -49,8 +49,11 @@ char *Task::taskInfo()
 {
 	static char s[1000];
 	vTaskList(s);
-	printf("Name                    State   Prio    Stack   Num\n");
-	printf(s);
-	printf("***********************************\n");
+	puts("***************************************************************");
+	puts("Name                    State    Prio          Stack        Num");
+	puts(s);
+	struct xHeapStats hs;
+	vPortGetHeapStats(&hs );
+	printf("heap size=%zu, largest=%zu\n", hs.xAvailableHeapSpaceInBytes, hs.xSizeOfLargestFreeBlockInBytes);
 	return s;
 }

@@ -22,7 +22,7 @@ Monitor::Monitor()
 
 void Monitor::proc()
 {
-	static char s[1000];
+//	static char s[1000];
 	int tick =  0;
 	gpio_init(PICO_DEFAULT_LED_PIN);
 	gpio_set_dir(PICO_DEFAULT_LED_PIN, GPIO_OUT);
@@ -31,19 +31,14 @@ void Monitor::proc()
 		gpio_put(PICO_DEFAULT_LED_PIN, 1);
 		vTaskDelay(500);
 		gpio_put(PICO_DEFAULT_LED_PIN, 0);
-		vTaskDelay(100);
-//		if (++tick < 10)
+		vTaskDelay(300);
+		if ((tick % 100) == 0)
+		{
+			taskInfo();
+		}
+		if (++tick < 100)
 		{
 			printf("%d\n", ++tick);
-		}
-		if ((tick % 10) == 0)
-		{
-			vTaskList(s);
-			printf("Name                    State   Prio    Stack   Num\n");
-			printf(s);
-			struct xHeapStats hs;
-			vPortGetHeapStats(&hs );
-			printf("heap size=%zu, largest=%zu\n", hs.xAvailableHeapSpaceInBytes, hs.xSizeOfLargestFreeBlockInBytes);
 		}
 	}
 }
@@ -62,7 +57,7 @@ private:
 
 
 Blink::Blink(int pin)
-	: Task(name(pin))
+	: Task(name(pin), 100)
 	, m_pin(pin)
 {
 
@@ -89,10 +84,10 @@ char *Blink::name(int pin)
 
 int main()
 {
-	stdio_uart_init();
-//	while (! stdio_usb_connected())
-//	{
-//	}
+	stdio_init_all();
+	while (! stdio_usb_connected())
+	{
+	}
 	Debug::showSysInfo("FreeRTOS-test");
 	printf("FreeRTOS %s\n", tskKERNEL_VERSION_NUMBER);
 	struct xHeapStats hs;
