@@ -29,7 +29,7 @@ const char *bin(uint16_t d, int ndig)
 	return tchar;
 }
 
-const char *hex(uint16_t d, int ndig)
+const char *hex(uint32_t d, int ndig)
 {
 	clear();
 	sprintf(tchar, "%0*x", ndig, d);
