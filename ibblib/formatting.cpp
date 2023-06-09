@@ -8,7 +8,7 @@
 #include "formatting.h"
 #include <string.h>
 
-namespace Formatting
+namespace Frm
 {
 
 static char tchar[100];
@@ -29,6 +29,14 @@ const char *bin(uint16_t d, int ndig)
 	return tchar;
 }
 
+const char *hex(uint16_t d, int ndig)
+{
+	clear();
+	sprintf(tchar, "%0*x", ndig, d);
+	return tchar;
+}
+
+#if 0
 const char *nbytesX(const uint8_t *d, int n)
 {
 	clear();
@@ -57,6 +65,6 @@ const char *nbytesX(const std::vector<uint8_t> d, int from, int n)
 	}
 	return tchar;
 }
-
+#endif
 }
 

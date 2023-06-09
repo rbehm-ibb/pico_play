@@ -11,11 +11,12 @@
 #include <vector>
 
 
-namespace Formatting
+namespace Frm
 {
 const char *bin(uint16_t d, int ndig);
-const char *nbytesX(const uint8_t *d, int n);
-const char *nbytesX(const std::vector<uint8_t> d, int from = 0, int n=-1);
+const char *hex(uint16_t d, int ndig);
+//const char *nbytesX(const uint8_t *d, int n);
+//const char *nbytesX(const std::vector<uint8_t> d, int from = 0, int n=-1);
 
 };
 
