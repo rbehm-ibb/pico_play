@@ -6,6 +6,7 @@ include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
 # Set name of project (as PROJECT_NAME) and C/C++ standards
 project(cmdline C CXX ASM)
+set (PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR} )
 set(PICO_BOARD picoX)
 #set(PICO_BOARD seeed_xiao_rp2040)
 
