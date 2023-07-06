@@ -1,5 +1,5 @@
 // ******************************************************
-// * copyright (C) 2023 by Reinhardt Behm/rbehm@hushmail.com
+// * copyright (C) 2023 by Reinhardt Behm/rbehm@bhushmail.com
 // * All Rights reserved
 // * created 5/29/2023 by behm
 // ******************************************************
@@ -7,34 +7,85 @@
 #ifndef IBQUEUE_H
 #define IBQUEUE_H
 
-//#include <stdio.h>
 #include <atomic>
 #include <stdint.h>
 
-void Qtest();
-
-template <typename T> class IbQueue
+///
+/// \brief The IbQueue class is a safe replacement for the SDK queue_t.
+///
+/// It implements only minimal functionality to allow it to work without locking.
+/// The SDK queue uses locking with a spinlock. This has the risk of priority inversion when used from on ISR
+/// because it would stall forever when the foreground had aquired the spinlock.
+///
+/// The template type must be a POD.
+///
+///
+template <typename T, int N> class IbQueue
 {
 public:
-	IbQueue(uint16_t size) : m_data(new T[size]), m_size(size) { clear(); }
-	~IbQueue() { delete m_data; }
-	bool ok() const { return m_data !=  nullptr; }
+	///
+	/// \brief IbQueue create a queue for size elements of type T
+	/// \param size number of elements for the queue
+	///
+	IbQueue() : m_data(new T[N])
+	{
+		clear();
+	}
+	///
+	/// \brief ~IbQueue relase  all heap data
+	~IbQueue()
+	{
+		delete m_data;
+	}
+	///
+	/// \brief ok test if creation was ok
+	/// \return instance is usable
+	///
+	bool ok() const
+	{
+		return m_data !=  nullptr;
+	}
+	///
+	/// \brief put a new item into the Q if possible
+	/// \param d [in] data to put
+	/// \return true if success, else nothing done
+	///
 	bool put(T d);
+	///
+	/// \brief get try to get an item from the Q, if was empty nothing is done
+	/// \param d [out] the fetched item
+	/// \return true if there was something, else d is not changed
+	///
 	bool get(T &d);
+	///
+	/// \brief isEmpty is the Q empty?
+	/// \return is empty
+	///
 	bool isEmpty() const;
+	///
+	/// \brief isFull is the Q full?
+	/// \return is full
+	///
 	bool isFull() const;
-	void clear() { m_head = 0; m_tail = 0; }
+	///
+	/// \brief clear the Q
+	///
+	void clear()
+	{
+		m_head = 0;
+		m_tail = 0;
+	}
 private:
-	T *m_data;
-	const uint16_t m_size;
-	volatile std::atomic_uint_fast16_t m_head;
-	volatile std::atomic_uint_fast16_t m_tail;
+	T *m_data;	///< space for the items
+//	static constexpr uint_fast8_t m_size = N;	///< max number of items
+	volatile std::atomic_uint_fast8_t m_head;	///< index to  next  free item
+	volatile std::atomic_uint_fast8_t m_tail;	///< index to oldest item
 };
 
-template<typename T> bool IbQueue<T>::put(T d)
+template<typename T, int N> bool IbQueue<T, N>::put(T d)
 {
 	uint16_t newhead = m_head + 1;
-	if (newhead >= m_size)
+	if (newhead >= N)
 	{
 		newhead = 0;
 	}
@@ -47,13 +98,13 @@ template<typename T> bool IbQueue<T>::put(T d)
 	return false;
 }
 
-template<typename T> bool IbQueue<T>::get(T &d)
+template<typename T, int N> bool IbQueue<T, N>::get(T &d)
 {
 	if (m_tail != m_head)
 	{
 		d = m_data[m_tail];
 		uint16_t nt = m_tail + 1;
-		if (nt >= m_size)
+		if (nt >= N)
 		{
 			nt = 0;
 		}
@@ -63,15 +114,15 @@ template<typename T> bool IbQueue<T>::get(T &d)
 	return false;
 }
 
-template<typename T> bool IbQueue<T>::isEmpty() const
+template<typename T, int N> bool IbQueue<T, N>::isEmpty() const
 {
 	return (m_tail == m_head);
 }
 
-template<typename T> bool IbQueue<T>::isFull() const
+template<typename T, int N> bool IbQueue<T, N>::isFull() const
 {
 	uint16_t newhead = m_head + 1;
-	if (newhead >= m_size)
+	if (newhead >= N)
 	{
 		newhead = 0;
 	}
