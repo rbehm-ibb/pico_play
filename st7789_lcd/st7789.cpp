@@ -7,9 +7,9 @@
 #include "st7789.h"
 #include <iostream>
 #include <stdio.h>
-#include "pico/stdlib.h"
-#include "hardware/pio.h"
-#include "hardware/gpio.h"
+#include <pico/stdlib.h>
+#include <hardware/pio.h>
+#include <hardware/gpio.h>
 //#include "ibblib/debug.h"
 #include "st7789_lcd.pio.h"
 #include "propfont.h"
@@ -17,7 +17,7 @@
 using namespace std;
 
 #define SCREEN_WIDTH 240
-#define SCREEN_HEIGHT 240
+#define SCREEN_HEIGHT 320
 
 //#define PIN_DIN 0
 //#define PIN_CLK 1

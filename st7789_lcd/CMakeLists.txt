@@ -1,18 +1,20 @@
 cmake_minimum_required(VERSION 3.20)
+set (PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR} )
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 set(PICO_BOARD picoX)
 pico_sdk_init()
 project(st7789 VERSION 0.1.1 LANGUAGES C CXX ASM)
+include_directories(../ibblib)
+
+file(GLOB FILESIBB ../ibblib/debug* ../ibblib/ledblink* ../ibblib/gpioinit*)
 
 add_executable(${PROJECT_NAME}
     main.cpp
 #    raspberry_256x256_rgb565.h
     st7789_lcd.pio
     st7789.h st7789.cpp
-    ibblib/picoX.h
-    ibblib/debug.h ibblib/debug.cpp
-    ibblib/ledblink.h ibblib/ledblink.cpp
-    ibblib/gpioinit.h ibblib/gpioinit.cpp
+    picoX.h
+	${FILESIBB}
     point.h point.cpp
     ibfont.h ibfont.cpp
     propfont.h propfont.cpp

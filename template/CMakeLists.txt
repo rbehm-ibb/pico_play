@@ -1,12 +1,14 @@
 # Set minimum required version of CMake
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.17)
 
 # Include build functions from Pico SDK
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 
 # Set name of project (as PROJECT_NAME) and C/C++ standards
-project(servo C CXX ASM)
+project(cmdline C CXX ASM)
+set (PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR} )
 set(PICO_BOARD picoX)
+#set(PICO_BOARD seeed_xiao_rp2040)
 
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
@@ -14,14 +16,17 @@ set(CMAKE_CXX_STANDARD 17)
 # Creates a pico-sdk subdirectory in our project for the libraries
 pico_sdk_init()
 
+include_directories(../ibblib)
+file(GLOB FILESIBB ../ibblib/debug* ../ibblib/ledblink* ../ibblib/gpioinit*)
+file(GLOB FILESSRC *.cpp)
+file(GLOB FILESH *.h)
+
 # Tell CMake where to find the executable source file
 add_executable(${PROJECT_NAME}
-	main.cpp
-	../ibblib/picoX.h
-	../ibblib/debug.h ../ibblib/debug.cpp
-	../ibblib/ledblink.h ../ibblib/ledblink.cpp
-	../ibblib/gpioinit.h ../ibblib/gpioinit.cpp
-#        pio_spi.c pio_spi.h
+	${FILESSRC}
+	${FILESH}
+	${FILESIBB}
+#	/home/behm/pico/pico-sdk/src/boards/include/boards/seeed_xiao_rp2040.h
 )
 
 #target_sources(test pio_spi.c pio_spi.h )
@@ -31,8 +36,11 @@ pico_add_extra_outputs(${PROJECT_NAME})
 
 # Link to pico_stdlib (gpio, time, etc. functions)
 target_link_libraries(${PROJECT_NAME}
-	pico_stdlib pico_mem_ops 
-	pico_multicore  hardware_pio
+	pico_stdlib
+	pico_mem_ops
+#	hardware_pio
+	hardware_uart hardware_irq
+#	pico_multicore
 )
 # pico_generate_pio_header(${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}/spi.pio)
 

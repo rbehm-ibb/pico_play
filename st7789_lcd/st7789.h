@@ -12,7 +12,7 @@
 #include "point.h"
 #include "ibfont.h"
 
-enum SpiPins { DC=0, CS=1, Clk=2, Mosi=3, Miso=4, Res=5, BL=6 };
+enum SpiPins { DC=16, CS=13, Clk=14, Mosi=15, /*Miso=15, */ Res=17, BL=18 };
 
 typedef uint16_t color_t;
 #define rgb565(r, g, b) (((b & 0x1f) << 0) | ((g & 0x3f) << 5) | ((r & 0x1f) << 11))
