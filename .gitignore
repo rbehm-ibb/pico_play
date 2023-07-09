@@ -12,3 +12,4 @@ CTestTestfile.cmake
 _deps
 build
 .qtc_clangd
+pico_play.tar.gz
