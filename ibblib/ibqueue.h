@@ -1,5 +1,5 @@
 // ******************************************************
-// * copyright (C) 2023 by Reinhardt Behm/rbehm@bhushmail.com
+// * copyright (C) 2023 by Reinhardt Behm/rbehm@becker.com.tw
 // * All Rights reserved
 // * created 5/29/2023 by behm
 // ******************************************************
@@ -24,27 +24,18 @@ template <typename T, int N> class IbQueue
 {
 public:
 	///
-	/// \brief IbQueue create a queue for size elements of type T
+	/// \brief IbQueue create a queue for N elements of type T
 	/// \param size number of elements for the queue
 	///
-	IbQueue() : m_data(new T[N])
-	{
-		clear();
-	}
+	IbQueue() : m_data(new T[N]) { clear(); }
 	///
 	/// \brief ~IbQueue relase  all heap data
-	~IbQueue()
-	{
-		delete m_data;
-	}
+	~IbQueue() { delete m_data; }
 	///
 	/// \brief ok test if creation was ok
 	/// \return instance is usable
 	///
-	bool ok() const
-	{
-		return m_data !=  nullptr;
-	}
+	bool ok() const { return m_data !=  nullptr; }
 	///
 	/// \brief put a new item into the Q if possible
 	/// \param d [in] data to put
@@ -70,11 +61,7 @@ public:
 	///
 	/// \brief clear the Q
 	///
-	void clear()
-	{
-		m_head = 0;
-		m_tail = 0;
-	}
+	void clear() { m_head = 0; m_tail = 0; }
 private:
 	T *m_data;	///< space for the items
 //	static constexpr uint_fast8_t m_size = N;	///< max number of items
@@ -82,7 +69,7 @@ private:
 	volatile std::atomic_uint_fast8_t m_tail;	///< index to oldest item
 };
 
-template<typename T, int N> bool IbQueue<T, N>::put(T d)
+template<typename T, int N> bool IbQueue<T,N>::put(T d)
 {
 	uint16_t newhead = m_head + 1;
 	if (newhead >= N)
@@ -98,7 +85,7 @@ template<typename T, int N> bool IbQueue<T, N>::put(T d)
 	return false;
 }
 
-template<typename T, int N> bool IbQueue<T, N>::get(T &d)
+template<typename T, int N> bool IbQueue<T,N>::get(T &d)
 {
 	if (m_tail != m_head)
 	{
@@ -114,12 +101,12 @@ template<typename T, int N> bool IbQueue<T, N>::get(T &d)
 	return false;
 }
 
-template<typename T, int N> bool IbQueue<T, N>::isEmpty() const
+template<typename T, int N> bool IbQueue<T,N>::isEmpty() const
 {
 	return (m_tail == m_head);
 }
 
-template<typename T, int N> bool IbQueue<T, N>::isFull() const
+template<typename T, int N> bool IbQueue<T,N>::isFull() const
 {
 	uint16_t newhead = m_head + 1;
 	if (newhead >= N)
