@@ -10,6 +10,7 @@
 #include <pico/stdlib.h>
 #include <hardware/pio.h>
 #include <hardware/gpio.h>
+#include <hardware/pwm.h>
 //#include "ibblib/debug.h"
 #include "st7789_lcd.pio.h"
 #include "propfont.h"
@@ -58,6 +59,17 @@ St7789::St7789()
 	gpio_put(BL, 1);
 
 	clear();
+	gpio_set_dir(BL, GPIO_OUT);
+	gpio_set_function(BL, GPIO_FUNC_PWM);
+	slice_num = pwm_gpio_to_slice_num(BL);
+	pwmCh = pwm_gpio_to_channel(BL);
+	const uint16_t kHz8 = 15630;
+	kHz16 = kHz8 / 2;
+	pwm_set_wrap(slice_num, kHz16);
+	pwm_set_chan_level(slice_num, pwmCh, kHz16);
+	pwm_set_enabled(slice_num, true);
+	setBl(99);
+	cout << "PWM pin=" << BL << " kHz16=" << kHz16 << " slice=" << slice_num << " ch=" << pwmCh << endl;
 }
 
 void St7789::clear(uint16_t color)
@@ -188,10 +200,36 @@ void St7789::put(uint16_t *d, size_t count)
 	}
 }
 
-void St7789::setBl(bool on)
+void St7789::setBl(int v)
 {
-	cout << __PRETTY_FUNCTION__ << ":" << on << endl;
-	gpio_put(BL, on);
+//	gpio_put(BL, on);
+	blSet = kHz16 * v / 100;
+	cout << __PRETTY_FUNCTION__ << ":" << v << " blSet=" << blSet << endl;
+	pwm_set_chan_level(slice_num, pwmCh, blSet);
+}
+
+const float blFact = 1.1;
+
+void St7789::blUp()
+{
+	blSet = (blSet * blFact) + 1;
+	if (blSet >= kHz16)
+	{
+		blSet = kHz16 -1;
+	}
+	cout << __PRETTY_FUNCTION__ << " blSet=" << blSet << endl;
+	pwm_set_chan_level(slice_num, pwmCh, blSet);
+}
+
+void St7789::blDown()
+{
+	blSet = (blSet / blFact) - 1;
+	if (blSet <= 0)
+	{
+		blSet = 1;
+	}
+	cout << __PRETTY_FUNCTION__ << " blSet=" << blSet << endl;
+	pwm_set_chan_level(slice_num, pwmCh, blSet);
 }
 
 void St7789::drawHLine(const Point &p, uint w, color_t color)

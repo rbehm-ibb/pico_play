@@ -22,6 +22,7 @@
 #include "st7789.h"
 #include "propfont.h"
 #include "font8x16.h"
+#include "analogfilter.h"
 
 using namespace std;
 
@@ -85,6 +86,7 @@ static void raster(St7789 *lcd)
 
 static void ui()
 {
+	static AnalogFilter filter(5);
 	int c = getchar_timeout_us(0);
 	if (c < 0)
 	{
@@ -111,11 +113,15 @@ static void ui()
 	case 'T':
 //		blink.setTime(100);
 		//			lcd->clear();
+		adc_init();
+		adc_set_temp_sensor_enabled(true);
+		adc_select_input(4);
 		do
 		{
 			int adc =  adc_read();
 			float ADC_voltage = adc * (3.3 / (4095.));
 			float temperature_celcius = 27 - (ADC_voltage - 0.706) / 0.001721;
+			temperature_celcius = filter.add(temperature_celcius);
 			char s[20];
 			sprintf(s, "%5.1fC", temperature_celcius);
 			lcd->setBg(St7789::BLACK);
@@ -132,10 +138,24 @@ static void ui()
 		while (getchar_timeout_us(100000) < 0);
 		break;
 	case '0':
-		lcd->setBl(false);
+		lcd->setBl(0);
 		break;
 	case '1':
-		lcd->setBl(true);
+	case '2':
+	case '3':
+	case '4':
+	case '5':
+	case '6':
+	case '7':
+	case '8':
+	case '9':
+		lcd->setBl((c-'0') * 10);
+		break;
+	case '+':
+		lcd->blUp();
+		break;
+	case '-':
+		lcd->blDown();
 		break;
 	case 'c':
 		lcd->clear(rgb565(63, 63, 0));

@@ -8,7 +8,7 @@
 #define ST7789_H
 
 #include <iostream>
-#include "hardware/pio.h"
+#include <hardware/pio.h>
 #include "point.h"
 #include "ibfont.h"
 
@@ -45,7 +45,9 @@ public:
 	St7789();
 	void clear(uint16_t color = 0);
 	void fillRect(const Rect &r, uint16_t color = 0);
-	void setBl(bool on);
+	void setBl(int v);
+	void blUp();
+	void blDown();
 	Rect screen() const { return m_win; }
 	void setFullScreen() { setWindow(m_screenWin); }
 	void drawHLine(const Point &p, uint w, color_t color);
@@ -77,6 +79,10 @@ private:
 	const IbFont *m_font;
 	color_t m_fg;
 	color_t m_bg;
+	uint slice_num;
+	uint pwmCh;
+	uint16_t kHz16;
+	int blSet;
 	void setDcCs(bool dc, bool cs);
 	void startPixels();
 	void put(uint8_t d);
