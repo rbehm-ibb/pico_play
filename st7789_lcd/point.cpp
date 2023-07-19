@@ -8,15 +8,19 @@
 
 std::ostream &operator<<(std::ostream &s, const Point &p)
 {
-	return s << "(" << p.x() << "," << p.y() << ")";
+	return s << "P(" << p.x() << "," << p.y() << ")";
 }
 
 std::ostream &operator<<(std::ostream &s, const Size &p)
 {
-	return s << "{" << p.w() << "," << p.h() << "}";
+	return s << "S{" << p.w() << "," << p.h() << "}";
 }
 
 std::ostream &operator<<(std::ostream &s, const Rect &r)
 {
-	return s << "[" << r.tl() << "," << r.sz() << "]";
+	return s << "R[" << r.tl() << "," << r.sz() << "]";
 }
+
+
+
+
