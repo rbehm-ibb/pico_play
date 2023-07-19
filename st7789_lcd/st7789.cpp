@@ -17,8 +17,8 @@
 
 using namespace std;
 
-#define SCREEN_WIDTH 240
-#define SCREEN_HEIGHT 320
+constexpr int SCREEN_WIDTH = 240;
+constexpr int SCREEN_HEIGHT = 320;
 
 //#define PIN_DIN 0
 //#define PIN_CLK 1
