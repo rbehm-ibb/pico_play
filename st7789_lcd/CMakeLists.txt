@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.17)
 set (PICO_BOARD_HEADER_DIRS ${CMAKE_CURRENT_LIST_DIR} )
 include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 set(PICO_BOARD picoX)
@@ -38,4 +38,5 @@ pico_add_extra_outputs(${PROJECT_NAME})
 # add url via pico_set_program_url
 #example_auto_set_url(pio_st7789_lcd)
 pico_enable_stdio_usb(${PROJECT_NAME} 1)
+add_compile_definitions(WAIT_USB)
 
