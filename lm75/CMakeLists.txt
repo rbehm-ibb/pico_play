@@ -7,7 +7,7 @@ include($ENV{PICO_SDK_PATH}/external/pico_sdk_import.cmake)
 # Set name of project (as PROJECT_NAME) and C/C++ standards
 project(lm75 C CXX ASM)
 set(PICO_BOARD seeed_xiao_rp2040)
-#set(PICO_BOARD seeed_xiao_rp2040)
+
 set (LIBHOME $ENV{LIBHOME})
 
 
@@ -29,8 +29,6 @@ add_executable(${PROJECT_NAME}
 	${FILESIBB}
 	seeed_xiao_rp2040.h
 )
-
-#target_sources(test pio_spi.c pio_spi.h )
 
 # Create map/bin/hex/uf2 files
 pico_add_extra_outputs(${PROJECT_NAME})
