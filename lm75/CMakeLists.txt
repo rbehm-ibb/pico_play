@@ -28,6 +28,7 @@ add_executable(${PROJECT_NAME}
 	${FILESH}
 	${FILESIBB}
 	seeed_xiao_rp2040.h
+	i2cdevice.h i2cdevice.cpp
 )
 
 # Create map/bin/hex/uf2 files
