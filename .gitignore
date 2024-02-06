@@ -13,3 +13,5 @@ _deps
 build
 .qtc_clangd
 pico_play.tar.gz
+picoIbQt
+pico-ssd1306
