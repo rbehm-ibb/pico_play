@@ -4,6 +4,8 @@
 // * created 2024-02-03 by behm
 // ******************************************************
 
+// #include <iostream>
+// #include <debug.h>
 #include <hardware/gpio.h>
 #include "i2cchannel.h"
 
@@ -28,14 +30,16 @@ bool I2cChannel::devOk(uint8_t addr) const
 
 int I2cChannel::write(uint8_t addr, const uint8_t *data, size_t len)
 {
-	uint8_t dummy;
-	int rc = i2c_read_blocking(m_channel, addr, const_cast<uint8_t*>(data), len, true);
+	// uint8_t dummy;
+	int rc = i2c_write_blocking(m_channel, addr, const_cast<uint8_t*>(data), len, true);
 	return rc;
 }
 
 int I2cChannel::read(uint8_t addr, uint8_t *data, size_t len) const
 {
 	// uint8_t dummy;
-	int rc = i2c_read_blocking(m_channel, addr, data, 1, true);
+	int rc = i2c_read_blocking(m_channel, addr, data, len, true);
+	// Debug::dump(data, len, __PRETTY_FUNCTION__);
+	// std::cout << "len=" << len << "rc="<< rc << std::endl;
 	return rc;
 }

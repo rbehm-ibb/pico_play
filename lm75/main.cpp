@@ -5,19 +5,17 @@
 // ******************************************************
 
 #include <ostream>
+#include <iomanip>
 #include <string.h>
-#include <hardware/i2c.h>
+// #include <hardware/i2c.h>
 #include "debug.h"
 #include "ledblink.h"
 #include "gpioinit.h"
 #include "cmdline.h"
 #include <pico/binary_info.h>
-// #include "simpleuart.h"
-// #include "uartline.h"
-// #include "uartipc.h"
-//#include "timer.h"
-#include "pico-ssd1306/ssd1306.h"
-#include "pico-ssd1306/textRenderer/TextRenderer.h"
+#include "i2cchannel.h"
+#include "i2cscan.h"
+#include "i2cdevice.h"
 
 using namespace std;
 
@@ -59,6 +57,8 @@ bool reserved_addr(uint8_t addr)
 }
 LedBlink *blink = 0;
 
+I2cChannel *chan;
+
 int main()
 {
 	stdio_usb_init();
@@ -78,15 +78,15 @@ int main()
 	}
 	blink->setTime(300);
 	Debug::showSysInfo(version);
-	i2c_init(i2c_default, 100 * 1000);
-	gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
-	gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
-	gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
-	gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
-	bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
+	chan =  new I2cChannel (i2c_default, PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN);
+	gpio.showGpio();
+	// i2c_init(i2c_default, 100 * 1000);
+	// gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
+	// gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
+	// gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);
+	// gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
+	// bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
 
-	pico_ssd1306::SSD1306 display = pico_ssd1306::SSD1306(i2c1, 0x3D, pico_ssd1306::Size::W128xH64);
-	display.setOrientation(0);
 	while (1)
 	{
 		_blink.poll();
@@ -158,48 +158,14 @@ static void uif()
 
 static void scanI2c(const CmdLine::Args &a)
 {
-	printf("\nI2C Bus Scan\n");
-	printf("   0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\n");
-
-	for (int addr = 0; addr < (1 << 7); ++addr)
-	{
-		if (addr % 16 == 0)
-		{
-			printf("%02x ", addr);
-		}
-
-		// Perform a 1-byte dummy read from the probe address. If a slave
-		// acknowledges this address, the function returns the number of bytes
-		// transferred. If the address byte is ignored, the function returns
-		// -1.
-
-		// Skip over any reserved addresses.
-		int ret;
-		uint8_t rxdata;
-		if (reserved_addr(addr))
-			ret = PICO_ERROR_GENERIC;
-		else
-			ret = i2c_read_blocking(i2c_default, addr, &rxdata, 1, false);
-
-		printf(ret < 0 ? "." : "@");
-		printf(addr % 16 == 15 ? "\n" : "  ");
-	}
+	I2cScan scan(chan);
+	scan.scan();
 }
 
 static void getlm(const CmdLine::Args &/*a*/)
 {
-	constexpr uint8_t lm = 0x48;
-	uint8_t d[2];
-	d[0] = 0;
-	int rcw =  i2c_write_blocking(i2c_default, lm, d, 1, true);
-	memset(d, 0xff, sizeof(d));
-	int rc = i2c_read_blocking(i2c_default, lm, d, sizeof(d), true);
-	printf("%s rcw=%d rc=%d ", __PRETTY_FUNCTION__, rcw, rc);
-	for (uint i =  0; i < sizeof(d); ++i)
-	{
-		printf(" %02x", d[i]);
-	}
-	uint16_t t = d[0] * 256 + d[1];
-	printf(" t=%d, %f\n", t, t / 256.);
+	I2cDevice lm75(chan, 0x48);
+	uint16_t t16 = lm75.readReg16(0);
+	cout << " regTemp="  << t16 /256. << endl;
 }
 

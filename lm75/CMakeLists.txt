@@ -18,7 +18,7 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 include_directories( ${LIBHOME} )
-add_subdirectory( pico-ssd1306 )
+#add_subdirectory( pico-ssd1306 )
 file(GLOB FILESIBB ${LIBHOME}/*.h ${LIBHOME}/*.cpp)
 file(GLOB FILESSRC *.cpp)
 file(GLOB FILESH *.h)
@@ -31,6 +31,7 @@ add_executable(${PROJECT_NAME}
 	seeed_xiao_rp2040.h
 	i2cchannel.h i2cchannel.cpp
 	i2cdevice.h i2cdevice.cpp
+	i2cscan.h i2cscan.cpp
 )
 
 # Create map/bin/hex/uf2 files

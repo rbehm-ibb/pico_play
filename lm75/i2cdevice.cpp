@@ -4,13 +4,16 @@
 // * created 2/5/2024 by behm
 // ******************************************************
 
+// #include <iostream>
 #include "i2cdevice.h"
+
+using namespace std;
 
 I2cDevice::I2cDevice(I2cChannel *channel, uint8_t addr)
 	: m_channel(channel)
 	, m_addr(addr)
 {}
-// QTC_TEMP
+
 bool I2cDevice::exist() const
 {
 	return m_channel->devOk(m_addr);
@@ -25,10 +28,13 @@ int I2cDevice::readReg8(uint8_t reg)
 int I2cDevice::readReg16(uint8_t reg)
 {
 	uint8_t regD[2];
-	m_channel->write(m_addr, &reg, 1);
+	// cout << " " << __PRETTY_FUNCTION__ << ":" << int(reg);
+	int rc = m_channel->write(m_addr, &reg, 1);
+	// cout << " " << ":" << int(reg) << "->" << dec << rc;
 	if (m_channel->read(m_addr, regD, 2) == 2)
 	{
-		return regD[0] + 256 * regD[1];
+		// cout << hex << " " << int(regD[0]) << " " << int(regD[1]) << dec << endl;
+		return 256 * regD[0] + regD[1];
 	}
 	return -1;
 }
