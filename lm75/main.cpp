@@ -16,6 +16,8 @@
 // #include "uartline.h"
 // #include "uartipc.h"
 //#include "timer.h"
+#include "pico-ssd1306/ssd1306.h"
+#include "pico-ssd1306/textRenderer/TextRenderer.h"
 
 using namespace std;
 
@@ -24,21 +26,21 @@ static const IoDef io[] =
 {
 	{ 0, IoDef::Out, 1, IoDef::PUp, "Tx0" },
 	{ 1, IoDef::In, 0, IoDef::PUp, "Rx0" },
-	{ 2, IoDef::Out, 0, IoDef::PUp, "tgl" },
-	{ 3, IoDef::Out, 0, IoDef::PUp, "irq" },
+	{ 2, IoDef::In, 0, IoDef::PUp, "tgl" },
+	{ 3, IoDef::In, 0, IoDef::PUp, "irq" },
 	{ PICO_DEFAULT_I2C_SDA_PIN, IoDef::In, 0, IoDef::PUp, "SDA" },
 	{ PICO_DEFAULT_I2C_SCL_PIN, IoDef::In, 0, IoDef::PUp, "SCL" },
-	{ PICO_DEFAULT_SPI_SCK_PIN, IoDef::Out, 0, IoDef::PUp, "SCK" },
+	{ PICO_DEFAULT_SPI_SCK_PIN, IoDef::In, 0, IoDef::PUp, "SCK" },
 	{ PICO_DEFAULT_SPI_RX_PIN, IoDef::In, 0, IoDef::PUp, "Miso" },
-	{ PICO_DEFAULT_SPI_TX_PIN, IoDef::Out, 0, IoDef::PUp, "Mosi" },
-	{ PICO_DEFAULT_WS2812_POWER_PIN, IoDef::Out, 0, IoDef::PUp, "NeoPwr" },
-	{ PICO_DEFAULT_WS2812_PIN, IoDef::Out, 0, IoDef::PUp, "NeoPix" },
-	{ 26, IoDef::Out, 0, IoDef::PUp, "A0" },
-	{ 27, IoDef::Out, 0, IoDef::PUp, "A1" },
-	{ 28, IoDef::Out, 0, IoDef::PUp, "A2" },
-	{ 29, IoDef::Out, 0, IoDef::PUp, "A3" },
-	{ 20, IoDef::Out, 0, IoDef::PUp, "Tx1" },
-	{ 21, IoDef::Out, 0, IoDef::PUp, "Rx1" },
+	{ PICO_DEFAULT_SPI_TX_PIN, IoDef::In, 0, IoDef::PUp, "Mosi" },
+	{ PICO_DEFAULT_WS2812_POWER_PIN, IoDef::In, 0, IoDef::PUp, "NeoPwr" },
+	{ PICO_DEFAULT_WS2812_PIN, IoDef::In, 0, IoDef::PUp, "NeoPix" },
+	{ 26, IoDef::In, 0, IoDef::PUp, "A0" },
+	{ 27, IoDef::In, 0, IoDef::PUp, "Button" },
+	{ 28, IoDef::In, 0, IoDef::PUp, "A2" },
+	{ 29, IoDef::In, 0, IoDef::PUp, "A3" },
+	{ 20, IoDef::In, 0, IoDef::PUp, "Tx1" },
+	{ 21, IoDef::In, 0, IoDef::PUp, "Rx1" },
 #ifdef PICO_LED_G
 	{ PICO_LED_R, IoDef::Out, 1, IoDef::None, "LedR" },
 	{ PICO_LED_G, IoDef::Out, 1, IoDef::None, "LedG" },
@@ -83,6 +85,8 @@ int main()
 	gpio_pull_up(PICO_DEFAULT_I2C_SCL_PIN);
 	bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
 
+	pico_ssd1306::SSD1306 display = pico_ssd1306::SSD1306(i2c1, 0x3D, pico_ssd1306::Size::W128xH64);
+	display.setOrientation(0);
 	while (1)
 	{
 		_blink.poll();
@@ -142,6 +146,13 @@ static void uif()
 	static CmdLine cmdline(cmd);
 	// rx();
 	cmdline.poll();
+	if (gpio_get(27) == 0)
+	{
+		CmdLine::Args args;
+		getlm(args);
+		while (gpio_get(27) == 0)
+			;
+	}
 	return;
 }
 

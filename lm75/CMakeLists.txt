@@ -17,7 +17,8 @@ set(CMAKE_CXX_STANDARD 17)
 # Creates a pico-sdk subdirectory in our project for the libraries
 pico_sdk_init()
 
-include_directories( ${LIBHOME})
+include_directories( ${LIBHOME} )
+add_subdirectory( pico-ssd1306 )
 file(GLOB FILESIBB ${LIBHOME}/*.h ${LIBHOME}/*.cpp)
 file(GLOB FILESSRC *.cpp)
 file(GLOB FILESH *.h)
@@ -28,6 +29,7 @@ add_executable(${PROJECT_NAME}
 	${FILESH}
 	${FILESIBB}
 	seeed_xiao_rp2040.h
+	i2cchannel.h i2cchannel.cpp
 	i2cdevice.h i2cdevice.cpp
 )
 

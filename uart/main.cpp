@@ -5,8 +5,8 @@
 // ******************************************************
 
 #include <ostream>
-#include <stdlib.h>
-#include <stdio.h>
+// #include <stdlib.h>
+// #include <stdio.h>
 //#include "pico/stdlib.h"
 //#include "pico/util/queue.h"
 //#include "hardware/irq.h"
@@ -15,8 +15,8 @@
 #include "gpioinit.h"
 #include "cmdline.h"
 #include "simpleuart.h"
-#include "uartline.h"
-#include "uartipc.h"
+// #include "uartline.h"
+// #include "uartipc.h"
 //#include "timer.h"
 
 using namespace std;
@@ -28,8 +28,8 @@ static const IoDef io[] =
 	{ 1, IoDef::In, 0, IoDef::PUp, "Rx0" },
 	{ 2, IoDef::Out, 0, IoDef::PUp, "tgl" },
 	{ 3, IoDef::Out, 0, IoDef::PUp, "irq" },
-	{ 4, IoDef::Out, 0, IoDef::PUp, "SDA" },
-	{ 5, IoDef::Out, 0, IoDef::PUp, "SCL" },
+	{ 4, IoDef::In, 0, IoDef::PUp, "SDA" },
+	{ 5, IoDef::In, 0, IoDef::PUp, "SCL" },
 	{ 8, IoDef::Out, 0, IoDef::PUp, "SCK" },
 	{ 9, IoDef::Out, 0, IoDef::PUp, "Miso" },
 	{ 10, IoDef::Out, 0, IoDef::PUp, "Mosi" },

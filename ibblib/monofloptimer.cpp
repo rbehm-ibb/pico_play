@@ -16,7 +16,7 @@ MonoFlopTimer::MonoFlopTimer(uint count)
 {
 	memset(m_timer, 0, sizeof(*m_timer * m_count));
 	add_repeating_timer_us(250/*1000 / tickPerMsec*/, &callback, this, &m_rtimer);
-s}
+}
 
 
 

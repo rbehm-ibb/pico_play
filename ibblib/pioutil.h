@@ -8,7 +8,7 @@
 #define PIOUTIL_H
 
 #include <iostream>
-#include "hardware/pio.h"
+#include <hardware/pio.h>
 
 std::ostream &operator<<(std::ostream &s, const pio_sm_config &p);
 static inline int bits(uint32_t reg, int lsb, uint32_t mask) { return (reg & mask) >> lsb; }

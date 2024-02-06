@@ -5,9 +5,9 @@
 // ******************************************************
 
 #include <hardware/gpio.h>
-#include "i2cdevice.h"
+#include "i2cchannel.h"
 
-I2cDevice::I2cDevice(i2c_inst *i2c, uint sda, uint scl)
+I2cChannel::I2cChannel(i2c_inst *i2c, uint sda, uint scl)
 	: m_channel(i2c)
 	, m_sda(sda)
 	, m_scl(scl)
@@ -19,23 +19,23 @@ I2cDevice::I2cDevice(i2c_inst *i2c, uint sda, uint scl)
 	gpio_pull_up(m_scl);
 }
 
-bool I2cDevice::devOk(uint8_t addr)
+bool I2cChannel::devOk(uint8_t addr) const
 {
 	uint8_t dummy;
 	int rc = i2c_read_blocking(m_channel, addr, &dummy, 1, true);
-	return rc = 1;
+	return rc == 1;
 }
 
-int I2cDevice::write(uint8_t addr, const uint8_t *data, size_t len)
+int I2cChannel::write(uint8_t addr, const uint8_t *data, size_t len)
 {
 	uint8_t dummy;
 	int rc = i2c_read_blocking(m_channel, addr, const_cast<uint8_t*>(data), len, true);
 	return rc;
 }
 
-int I2cDevice::read(uint8_t addr, uint8_t *data, size_t len)
+int I2cChannel::read(uint8_t addr, uint8_t *data, size_t len) const
 {
-	uint8_t dummy;
+	// uint8_t dummy;
 	int rc = i2c_read_blocking(m_channel, addr, data, 1, true);
 	return rc;
 }
