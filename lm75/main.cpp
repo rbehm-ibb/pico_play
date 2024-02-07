@@ -16,6 +16,7 @@
 #include "i2cchannel.h"
 #include "i2cscan.h"
 #include "i2cdevice.h"
+#include "i2cregister.h"
 
 using namespace std;
 
@@ -104,6 +105,7 @@ int main()
 static void  info(const CmdLine::Args &)
 {
 	Debug::showSysInfo(version);
+	Debug::heapInfo();
 //	cout << __PRETTY_FUNCTION__ << a << endl;
 }
 
@@ -165,7 +167,9 @@ static void scanI2c(const CmdLine::Args &a)
 static void getlm(const CmdLine::Args &/*a*/)
 {
 	I2cDevice lm75(chan, 0x48);
+	I2cRegister temp(&lm75, 0, 2);
+	I2cRegister temp1(&lm75, 0, 1);
 	uint16_t t16 = lm75.readReg16(0);
-	cout << " regTemp="  << t16 /256. << endl;
+	cout << " regTemp16="  << temp.read() /256. << " reg8=" << temp1.read() << endl;
 }
 

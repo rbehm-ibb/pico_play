@@ -29,7 +29,7 @@ int I2cDevice::readReg16(uint8_t reg)
 {
 	uint8_t regD[2];
 	// cout << " " << __PRETTY_FUNCTION__ << ":" << int(reg);
-	int rc = m_channel->write(m_addr, &reg, 1);
+	m_channel->write(m_addr, &reg, 1);
 	// cout << " " << ":" << int(reg) << "->" << dec << rc;
 	if (m_channel->read(m_addr, regD, 2) == 2)
 	{

@@ -18,7 +18,6 @@ set(CMAKE_CXX_STANDARD 17)
 pico_sdk_init()
 
 include_directories( ${LIBHOME} )
-#add_subdirectory( pico-ssd1306 )
 file(GLOB FILESIBB ${LIBHOME}/*.h ${LIBHOME}/*.cpp)
 file(GLOB FILESSRC *.cpp)
 file(GLOB FILESH *.h)
@@ -32,6 +31,7 @@ add_executable(${PROJECT_NAME}
 	i2cchannel.h i2cchannel.cpp
 	i2cdevice.h i2cdevice.cpp
 	i2cscan.h i2cscan.cpp
+	i2cregister.h i2cregister.cpp
 )
 
 # Create map/bin/hex/uf2 files
@@ -42,7 +42,7 @@ target_link_libraries(${PROJECT_NAME}
 	pico_stdlib
 	pico_mem_ops
 	hardware_pio
-	hardware_uart hardware_irq
+	# hardware_uart hardware_irq
 	hardware_i2c
 #	pico_multicore
 )
