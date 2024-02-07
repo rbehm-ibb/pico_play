@@ -17,6 +17,7 @@ set(CMAKE_CXX_STANDARD 17)
 # Creates a pico-sdk subdirectory in our project for the libraries
 pico_sdk_init()
 
+add_subdirectory(i2c)
 include_directories( ${LIBHOME} )
 file(GLOB FILESIBB ${LIBHOME}/*.h ${LIBHOME}/*.cpp)
 file(GLOB FILESSRC *.cpp)
@@ -24,14 +25,9 @@ file(GLOB FILESH *.h)
 
 # Tell CMake where to find the executable source file
 add_executable(${PROJECT_NAME}
-	${FILESSRC}
-	${FILESH}
+	main.cpp
 	${FILESIBB}
 	seeed_xiao_rp2040.h
-	i2cchannel.h i2cchannel.cpp
-	i2cdevice.h i2cdevice.cpp
-	i2cscan.h i2cscan.cpp
-	i2cregister.h i2cregister.cpp
 )
 
 # Create map/bin/hex/uf2 files
@@ -42,6 +38,7 @@ target_link_libraries(${PROJECT_NAME}
 	pico_stdlib
 	pico_mem_ops
 	hardware_pio
+	i2c
 	# hardware_uart hardware_irq
 	hardware_i2c
 #	pico_multicore
